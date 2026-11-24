@@ -1,0 +1,2589 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Тигрум CRM — Детский развивающий центр</title>
+
+  <!-- iOS Web App / PWA Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="ДЦ «Тигрум»" />
+  <meta name="theme-color" content="#F2F2F7" />
+  <link id="apple-touch-icon" rel="apple-touch-icon" href="" />
+  <link id="app-favicon" rel="icon" type="image/png" href="" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --ios-bg: #F2F2F7;
+      --ios-card: #FFFFFF;
+      --ios-blue: #007AFF;
+      --ios-green: #34C759;
+      --ios-orange: #FF9500;
+      --ios-red: #FF3B30;
+      --ios-indigo: #5856D6;
+    }
+
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", sans-serif;
+      background-color: #E5E5EA;
+      color: #000000;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .ios-glass {
+      background: rgba(249, 249, 251, 0.88);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+    }
+
+    .ios-card {
+      background-color: var(--ios-card);
+      border-radius: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+    }
+
+    .ios-press {
+      transition: transform 0.14s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.14s ease;
+    }
+    .ios-press:active {
+      transform: scale(0.97);
+      opacity: 0.85;
+    }
+
+    @keyframes sheetSlideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    @keyframes backdropFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes lockShake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .sheet-animate {
+      animation: sheetSlideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+    }
+    .backdrop-animate {
+      animation: backdropFadeIn 0.22s ease forwards;
+    }
+    .shake-animate {
+      animation: lockShake 0.35s ease;
+    }
+
+    .safe-top {
+      padding-top: max(12px, env(safe-area-inset-top));
+    }
+    .safe-bottom {
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+  </style>
+</head>
+<body class="min-h-screen flex justify-center items-start sm:py-6">
+
+  <!-- iOS App Container -->
+  <div id="app-shell" class="w-full max-w-[430px] min-h-screen sm:min-h-[852px] sm:h-[852px] bg-[#F2F2F7] sm:rounded-[48px] sm:shadow-[0_24px_70px_rgba(0,0,0,0.22)] sm:border-[8px] sm:border-[#1C1C1E] flex flex-col relative overflow-hidden">
+
+    <!-- iOS Lock Screen Overlay -->
+    <div id="lock-screen" class="hidden absolute inset-0 z-40 bg-[#F2F2F7]/95 backdrop-blur-2xl flex flex-col justify-between px-6 py-10 select-none">
+      <!-- Dynamic Lock Screen Content -->
+    </div>
+
+    <!-- iOS Status Bar -->
+    <div class="hidden sm:flex items-center justify-between px-7 pt-3 pb-1 text-[13px] font-semibold text-black select-none bg-[#F2F2F7] z-30">
+      <span id="ios-clock">09:41</span>
+      <div class="w-28 h-6 bg-black rounded-full mx-auto"></div>
+      <div class="flex items-center gap-1.5">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+          <rect x="2" y="14" width="3" height="6" rx="1" />
+          <rect x="7" y="11" width="3" height="9" rx="1" />
+          <rect x="12" y="7" width="3" height="13" rx="1" />
+          <rect x="17" y="3" width="3" height="17" rx="1" />
+        </svg>
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 18c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm-4.9-2.3l1.4 1.4C9.4 16.4 10.6 16 12 16s2.6.4 3.5 1.1l1.4-1.4C15.6 14.6 13.9 14 12 14s-3.6.6-4.9 1.7zm-2.8-2.8l1.4 1.4C7.3 13 9.5 12 12 12s4.7 1 6.3 2.3l1.4-1.4C17.7 11.1 15 10 12 10s-5.7 1.1-7.7 2.9z"/>
+        </svg>
+        <div class="w-6 h-3 border border-black/80 rounded-[4px] p-[1.5px] flex items-center">
+          <div class="w-full h-full bg-black rounded-[2px]"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="ios-glass sticky top-0 z-20 px-4 safe-top pb-3 border-b border-black/[0.06]">
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div id="header-brand-logo" class="shrink-0 flex items-center justify-center"></div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5">
+              <p id="header-subtitle" class="text-[11px] font-semibold uppercase tracking-wider text-[#8E8E93] truncate">
+                ДЦ «Тигрум»
+              </p>
+              <span id="cloud-status-badge" onclick="openCloudSyncModal()" class="cursor-pointer inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 shrink-0">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Подключение...
+              </span>
+            </div>
+            <h1 id="header-title" class="text-[26px] leading-[32px] font-bold tracking-tight text-black truncate">
+              Расписание
+            </h1>
+          </div>
+        </div>
+        <div id="header-action" class="shrink-0"></div>
+      </div>
+    </header>
+
+    <!-- Main Scrollable Viewport -->
+    <main id="main-content" class="flex-1 overflow-y-auto no-scrollbar px-4 pt-3 pb-28 space-y-4">
+      <!-- Dynamic Content -->
+    </main>
+
+    <!-- Bottom iOS Tab Bar -->
+    <nav class="ios-glass border-t border-black/[0.08] px-2 pt-2 safe-bottom z-20 shrink-0">
+      <div class="grid grid-cols-4 gap-1">
+        <button onclick="switchTab('schedule')" data-tab="schedule" class="tab-btn flex flex-col items-center justify-center py-1 rounded-xl text-[#007AFF] transition-colors">
+          <svg class="w-6 h-6 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="3" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          <span class="text-[10px] font-semibold">Расписание</span>
+        </button>
+
+        <button onclick="switchTab('children')" data-tab="children" class="tab-btn flex flex-col items-center justify-center py-1 rounded-xl text-[#8E8E93] transition-colors">
+          <svg class="w-6 h-6 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <span class="text-[10px] font-semibold">Дети</span>
+        </button>
+
+        <button onclick="switchTab('teachers')" data-tab="teachers" class="tab-btn flex flex-col items-center justify-center py-1 rounded-xl text-[#8E8E93] transition-colors">
+          <svg class="w-6 h-6 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+            <path d="M6 12v5c3 3 9 3 12 0v-5" />
+          </svg>
+          <span class="text-[10px] font-semibold">Педагоги</span>
+        </button>
+
+        <button onclick="switchTab('finance')" data-tab="finance" class="tab-btn flex flex-col items-center justify-center py-1 rounded-xl text-[#8E8E93] transition-colors">
+          <svg class="w-6 h-6 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="1" x2="12" y2="23" />
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+          </svg>
+          <span class="text-[10px] font-semibold">Финансы</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Bottom Sheet Modal Container -->
+    <div id="modal-root" class="hidden fixed inset-0 z-50 flex items-end justify-center">
+      <div id="modal-backdrop" onclick="closeModal()" class="fixed inset-0 bg-black/40 backdrop-animate"></div>
+      <div id="modal-sheet" class="relative w-full max-w-[430px] bg-[#F2F2F7] rounded-t-[28px] max-h-[90vh] flex flex-col shadow-2xl sheet-animate overflow-hidden">
+        <!-- Modal Content -->
+      </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-14 left-4 right-4 max-w-[398px] mx-auto z-[60] pointer-events-none flex flex-col gap-2"></div>
+  </div>
+
+  <!-- Firebase Cloud Sync Module -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const WORKSPACE_KEY = 'tigrum_cloud_workspace_v1';
+    let db = null;
+    let auth = null;
+    let currentUser = null;
+    let unsubscribeWorkspace = null;
+    let isApplyingRemote = false;
+
+    function getWorkspaceCode() {
+      let code = '';
+      try {
+        code = localStorage.getItem(WORKSPACE_KEY) || '';
+      } catch (e) {}
+      if (!code) {
+        code = 'tigrum-main';
+        try {
+          localStorage.setItem(WORKSPACE_KEY, code);
+        } catch (e) {}
+      }
+      return code;
+    }
+
+    function normalizeWorkspaceCode(raw) {
+      return String(raw || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9_-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '') || 'tigrum-main';
+    }
+
+    function updateCloudBadge(status, label) {
+      const badge = document.getElementById('cloud-status-badge');
+      if (!badge) return;
+      if (status === 'online') {
+        badge.className = 'cursor-pointer inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 shrink-0';
+        badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> ${label || 'Облако'}`;
+      } else if (status === 'syncing') {
+        badge.className = 'cursor-pointer inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 shrink-0';
+        badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-ping"></span> Сохранение...`;
+      } else {
+        badge.className = 'cursor-pointer inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 shrink-0';
+        badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> ${label || 'Локально'}`;
+      }
+    }
+
+    function getAppIdSafe() {
+      return typeof __app_id !== 'undefined' && __app_id ? String(__app_id) : 'default-app-id';
+    }
+
+    function subscribeToWorkspace(code) {
+      if (!db || !currentUser) return;
+      if (unsubscribeWorkspace) {
+        unsubscribeWorkspace();
+        unsubscribeWorkspace = null;
+      }
+
+      const appId = getAppIdSafe();
+      const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'tigrum_workspaces', code);
+
+      unsubscribeWorkspace = onSnapshot(
+        docRef,
+        (snap) => {
+          updateCloudBadge('online', `Облако: ${code}`);
+          if (snap.exists()) {
+            const remote = snap.data();
+            if (remote && remote.payloadJson) {
+              try {
+                const parsed = JSON.parse(remote.payloadJson);
+                if (parsed && Array.isArray(parsed.teachers) && Array.isArray(parsed.children) && Array.isArray(parsed.lessons)) {
+                  isApplyingRemote = true;
+                  if (typeof window.applyRemoteCloudData === 'function') {
+                    window.applyRemoteCloudData(parsed);
+                  }
+                  isApplyingRemote = false;
+                }
+              } catch (err) {
+                console.error('Ошибка разбора облачных данных:', err);
+              }
+            }
+          } else {
+            // Если в облаке еще нет документа для этого кода, сохраняем текущую локальную базу
+            pushStateToCloud();
+          }
+        },
+        (error) => {
+          console.error('Ошибка облачной синхронизации:', error);
+          updateCloudBadge('offline', 'Офлайн');
+        }
+      );
+    }
+
+    async function pushStateToCloud() {
+      if (isApplyingRemote || !db || !currentUser) return;
+      const code = getWorkspaceCode();
+      const appId = getAppIdSafe();
+      const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'tigrum_workspaces', code);
+
+      try {
+        updateCloudBadge('syncing');
+        const payload = typeof window.getSerializableAppData === 'function'
+          ? window.getSerializableAppData()
+          : '{}';
+        await setDoc(docRef, {
+          workspaceCode: code,
+          payloadJson: payload,
+          updatedAt: new Date().toISOString(),
+          updatedBy: currentUser.uid
+        }, { merge: true });
+        updateCloudBadge('online', `Облако: ${code}`);
+      } catch (err) {
+        console.error('Ошибка отправки в облако:', err);
+        updateCloudBadge('offline', 'Ошибка сети');
+      }
+    }
+
+    function switchWorkspaceCode(newRawCode) {
+      const cleanCode = normalizeWorkspaceCode(newRawCode);
+      try {
+        localStorage.setItem(WORKSPACE_KEY, cleanCode);
+      } catch (e) {}
+      subscribeToWorkspace(cleanCode);
+      if (typeof window.showToast === 'function') {
+        window.showToast(`Подключено к базе: ${cleanCode}`, 'success');
+      }
+      if (typeof window.closeModal === 'function') {
+        window.closeModal();
+      }
+      if (typeof window.switchTab === 'function' && window.uiState) {
+        window.switchTab(window.uiState.activeTab);
+      }
+    }
+
+    async function forceUploadCurrentToCloud() {
+      await pushStateToCloud();
+      if (typeof window.showToast === 'function') {
+        window.showToast('Текущая база отправлена в облако', 'success');
+      }
+    }
+
+    window.cloudSyncApi = {
+      getWorkspaceCode,
+      switchWorkspaceCode,
+      pushStateToCloud,
+      forceUploadCurrentToCloud
+    };
+
+    async function initCloudBackend() {
+      try {
+        if (typeof __firebase_config === 'undefined' || !__firebase_config) {
+          updateCloudBadge('offline', 'Локальный режим');
+          return;
+        }
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          const cred = await signInWithCustomToken(auth, __initial_auth_token);
+          currentUser = cred.user;
+        } else {
+          const cred = await signInAnonymously(auth);
+          currentUser = cred.user;
+        }
+
+        const code = getWorkspaceCode();
+        subscribeToWorkspace(code);
+      } catch (err) {
+        console.error('Ошибка инициализации облака:', err);
+        updateCloudBadge('offline', 'Локально');
+      }
+    }
+
+    initCloudBackend();
+  </script>
+
+  <script>
+    // =========================================================================
+    // 1. КОНСТАНТЫ И НАЧАЛЬНОЕ СОСТОЯНИЕ БЕЗ ДЕМО-ДАННЫХ
+    // =========================================================================
+    const STORAGE_KEY = 'tigrum_center_clean_v3';
+    const AUTH_STORAGE_KEY = 'tigrum_center_auth_v1';
+
+    const DEFAULT_SUBJECTS = [
+      'Логопед',
+      'Подготовка к школе',
+      'Творческая мастерская',
+      'Английский язык',
+      'Робототехника'
+    ];
+
+    const AVATAR_COLORS = [
+      'bg-indigo-600',
+      'bg-emerald-600',
+      'bg-amber-500',
+      'bg-rose-500',
+      'bg-sky-600',
+      'bg-purple-600'
+    ];
+
+    const DAYS = [
+      { key: 'Пн', full: 'Понедельник', jsDay: 1 },
+      { key: 'Вт', full: 'Вторник', jsDay: 2 },
+      { key: 'Ср', full: 'Среда', jsDay: 3 },
+      { key: 'Чт', full: 'Четверг', jsDay: 4 },
+      { key: 'Пт', full: 'Пятница', jsDay: 5 },
+      { key: 'Сб', full: 'Суббота', jsDay: 6 },
+      { key: 'Вс', full: 'Воскресенье', jsDay: 0 }
+    ];
+
+    const MONTHS_RU = [
+      'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+      'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+    ];
+
+    const MONTHS_GENITIVE_RU = [
+      'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+      'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+    ];
+
+    function getEmptyStateData() {
+      return {
+        subjects: [...DEFAULT_SUBJECTS],
+        teachers: [],
+        children: [],
+        lessons: [],
+        attendanceLog: {},
+        topUps: []
+      };
+    }
+
+    function loadInitialData() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('tigrum_center_clean_v2');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && Array.isArray(parsed.teachers) && Array.isArray(parsed.children) && Array.isArray(parsed.lessons)) {
+            if (!Array.isArray(parsed.subjects) || parsed.subjects.length === 0) {
+              parsed.subjects = [...DEFAULT_SUBJECTS];
+            }
+            if (!Array.isArray(parsed.topUps)) {
+              parsed.topUps = [];
+            }
+            if (!parsed.attendanceLog || typeof parsed.attendanceLog !== 'object') {
+              parsed.attendanceLog = {};
+            }
+            return parsed;
+          }
+        }
+      } catch (e) {
+        console.warn('Не удалось прочитать localStorage:', e);
+      }
+      return getEmptyStateData();
+    }
+
+    let appData = loadInitialData();
+
+    function saveAppData() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      } catch (e) {
+        console.error('Ошибка сохранения в localStorage:', e);
+      }
+      if (window.cloudSyncApi && typeof window.cloudSyncApi.pushStateToCloud === 'function') {
+        window.cloudSyncApi.pushStateToCloud();
+      }
+    }
+
+    window.getSerializableAppData = function() {
+      return JSON.stringify(appData);
+    };
+
+    window.applyRemoteCloudData = function(parsed) {
+      appData = {
+        subjects: Array.isArray(parsed.subjects) && parsed.subjects.length ? parsed.subjects : [...DEFAULT_SUBJECTS],
+        teachers: Array.isArray(parsed.teachers) ? parsed.teachers : [],
+        children: Array.isArray(parsed.children) ? parsed.children : [],
+        lessons: Array.isArray(parsed.lessons) ? parsed.lessons : [],
+        attendanceLog: parsed.attendanceLog && typeof parsed.attendanceLog === 'object' ? parsed.attendanceLog : {},
+        topUps: Array.isArray(parsed.topUps) ? parsed.topUps : []
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      } catch (e) {}
+      if (document.getElementById('modal-root')?.classList.contains('hidden')) {
+        switchTab(uiState.activeTab);
+      }
+    };
+
+    function openCloudSyncModal() {
+      const currentCode = window.cloudSyncApi ? window.cloudSyncApi.getWorkspaceCode() : 'tigrum-main';
+      openModal(`
+        <div class="px-4 py-3.5 bg-white border-b border-black/5 flex items-center justify-between shrink-0">
+          <button onclick="closeModal()" class="text-[15px] text-[#007AFF] font-medium">Закрыть</button>
+          <h3 class="text-[16px] font-bold text-black">Облачная синхронизация</h3>
+          <button onclick="saveWorkspaceCodeFromModal()" class="text-[15px] text-[#007AFF] font-bold">Подключить</button>
+        </div>
+        <div class="p-4 overflow-y-auto space-y-4">
+          <div class="ios-card p-4 space-y-3">
+            <div class="flex items-center gap-3">
+              ${getTigrumLogoImgHtml('w-12 h-10 object-contain shrink-0')}
+              <div>
+                <h4 class="text-[15px] font-bold text-black">Единая база для всех устройств</h4>
+                <p class="text-[12px] text-[#8E8E93]">Укажите одинаковый код центра на iPhone, Android и компьютере, чтобы данные синхронизировались мгновенно.</p>
+              </div>
+            </div>
+            <div>
+              <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Код базы центра (латиница и цифры)</label>
+              <div class="flex gap-2">
+                <input id="cloud-workspace-input" type="text" value="${escapeHtml(currentCode)}" placeholder="tigrum-main" class="flex-1 bg-[#F2F2F7] px-3.5 py-2.5 rounded-xl text-[14px] font-bold text-black focus:outline-none" />
+                <button onclick="copyWorkspaceCode('${escapeHtml(currentCode)}')" class="ios-press bg-[#007AFF]/10 text-[#007AFF] font-semibold text-[13px] px-3.5 py-2.5 rounded-xl shrink-0">
+                  Копия
+                </button>
+              </div>
+            </div>
+            <button onclick="window.cloudSyncApi && window.cloudSyncApi.forceUploadCurrentToCloud()" class="ios-press w-full bg-emerald-50 text-emerald-700 font-semibold text-[13px] py-2.5 rounded-xl">
+              Принудительно выгрузить текущую базу в облако
+            </button>
+          </div>
+        </div>
+      `);
+    }
+
+    function saveWorkspaceCodeFromModal() {
+      const inp = document.getElementById('cloud-workspace-input');
+      const val = inp ? inp.value.trim() : '';
+      if (!val) {
+        showToast('Введите код базы центра', 'warning');
+        return;
+      }
+      if (window.cloudSyncApi) {
+        window.cloudSyncApi.switchWorkspaceCode(val);
+      }
+    }
+
+    function copyWorkspaceCode(code) {
+      const temp = document.createElement('textarea');
+      temp.value = code;
+      document.body.appendChild(temp);
+      temp.select();
+      try {
+        document.execCommand('copy');
+        showToast(`Код «${code}» скопирован`, 'success');
+      } catch (e) {
+        showToast('Не удалось скопировать код', 'error');
+      }
+      temp.remove();
+    }
+
+    function toIsoDateStr(dateObj) {
+      const y = dateObj.getFullYear();
+      const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const d = String(dateObj.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function parseIsoDate(isoStr) {
+      const [y, m, d] = isoStr.split('-').map(Number);
+      return new Date(y, (m || 1) - 1, d || 1);
+    }
+
+    function getDayKeyFromDate(dateObj) {
+      const jsDay = dateObj.getDay();
+      const found = DAYS.find(d => d.jsDay === jsDay);
+      return found ? found.key : 'Пн';
+    }
+
+    function formatHumanDate(isoStr) {
+      const d = parseIsoDate(isoStr);
+      const dayKey = getDayKeyFromDate(d);
+      return `${d.getDate()} ${MONTHS_GENITIVE_RU[d.getMonth()]} (${dayKey})`;
+    }
+
+    const todayInit = new Date();
+    const uiState = {
+      activeTab: 'schedule',
+      selectedDate: toIsoDateStr(todayInit),
+      calendarYear: todayInit.getFullYear(),
+      calendarMonth: todayInit.getMonth(),
+      scheduleSubjectFilter: 'Все',
+      childSearch: '',
+      financeYear: todayInit.getFullYear(),
+      financeMonth: todayInit.getMonth()
+    };
+
+    // =========================================================================
+    // 2. БРЕНДИНГ И ЛОГОТИП ДЦ «ТИГРУМ» (CANVAS)
+    // =========================================================================
+    let cachedLogoDataUrl = null;
+
+    function createTigrumLogoDataUrl() {
+      if (cachedLogoDataUrl) return cachedLogoDataUrl;
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 240;
+        canvas.height = 200;
+        const ctx = canvas.getContext('2d');
+
+        // Фиолетовые круги на фоне
+        ctx.fillStyle = '#8B5CF6';
+        ctx.beginPath();
+        ctx.arc(118, 102, 82, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#A78BFA';
+        ctx.beginPath();
+        ctx.arc(178, 56, 36, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Слово ТИГР
+        ctx.save();
+        ctx.translate(120, 76);
+        ctx.rotate(-0.07);
+        ctx.font = '900 54px Inter, Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.lineWidth = 8;
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.strokeText('ТИГР', 0, 0);
+        ctx.fillStyle = '#F97316';
+        ctx.fillText('ТИГР', 0, 0);
+        ctx.restore();
+
+        // Слово УМ
+        ctx.save();
+        ctx.translate(152, 134);
+        ctx.rotate(-0.05);
+        ctx.font = '900 52px Inter, Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.lineWidth = 8;
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.strokeText('УМ', 0, 0);
+        ctx.fillStyle = '#22C55E';
+        ctx.fillText('УМ', 0, 0);
+        ctx.restore();
+
+        // Мордочка тигренка слева внизу
+        ctx.fillStyle = '#FB923C';
+        ctx.beginPath();
+        ctx.arc(62, 138, 30, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.stroke();
+
+        // Ушки
+        ctx.fillStyle = '#F97316';
+        ctx.beginPath();
+        ctx.arc(40, 114, 10, 0, Math.PI * 2);
+        ctx.arc(84, 114, 10, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Глазки и носик
+        ctx.fillStyle = '#1E293B';
+        ctx.beginPath();
+        ctx.arc(52, 134, 4, 0, Math.PI * 2);
+        ctx.arc(72, 134, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#EC4899';
+        ctx.beginPath();
+        ctx.arc(62, 144, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        cachedLogoDataUrl = canvas.toDataURL('image/png');
+        return cachedLogoDataUrl;
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function getTigrumLogoImgHtml(classes = 'w-11 h-10 object-contain') {
+      const url = createTigrumLogoDataUrl();
+      if (!url) return '';
+      return `<img src="${url}" alt="Тигрум" class="${classes}" />`;
+    }
+
+    function initBrandBranding() {
+      const url = createTigrumLogoDataUrl();
+      const headerSlot = document.getElementById('header-brand-logo');
+      if (headerSlot && url) {
+        headerSlot.innerHTML = getTigrumLogoImgHtml('w-11 h-10 object-contain');
+      }
+      const touchIcon = document.getElementById('apple-touch-icon');
+      const favIcon = document.getElementById('app-favicon');
+      if (touchIcon && url) touchIcon.href = url;
+      if (favIcon && url) favIcon.href = url;
+    }
+
+    // =========================================================================
+    // 2.5. ЗАЩИТА ПАРОЛЕМ ПРИ КАЖДОМ ВХОДЕ (iOS LOCK SCREEN)
+    // =========================================================================
+    const lockState = {
+      isUnlocked: false,
+      setupStep: 'create',
+      tempFirstPin: '',
+      enteredPin: '',
+      useTextPassword: false
+    };
+
+    function getAuthConfig() {
+      try {
+        const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.secret) {
+            return parsed;
+          }
+        }
+      } catch (e) {
+        console.warn('Ошибка чтения настроек пароля:', e);
+      }
+      return null;
+    }
+
+    function saveAuthConfig(secret, isText = false) {
+      try {
+        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({
+          secret: String(secret),
+          isText: Boolean(isText),
+          updatedAt: new Date().toISOString()
+        }));
+      } catch (e) {
+        console.error('Ошибка сохранения пароля:', e);
+      }
+    }
+
+    function lockAppNow() {
+      lockState.isUnlocked = false;
+      lockState.enteredPin = '';
+      lockState.setupStep = 'create';
+      lockState.tempFirstPin = '';
+      closeModal();
+      renderLockScreen();
+    }
+
+    function renderLockScreen() {
+      const screen = document.getElementById('lock-screen');
+      if (!screen) return;
+
+      const auth = getAuthConfig();
+      screen.classList.remove('hidden');
+
+      // Если пароль еще не установлен — предлагаем задать его при первом входе
+      if (!auth) {
+        const isConfirm = lockState.setupStep === 'confirm';
+        screen.innerHTML = `
+          <div class="flex flex-col items-center text-center pt-4 space-y-3">
+            ${getTigrumLogoImgHtml('w-20 h-16 object-contain')}
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">
+                Безопасность ДЦ «Тигрум»
+              </span>
+              <h2 class="text-[22px] font-extrabold text-black mt-2">
+                ${isConfirm ? 'Повторите пароль' : 'Установите пароль входа'}
+              </h2>
+              <p class="text-[13px] text-[#8E8E93] mt-1 max-w-[280px]">
+                ${isConfirm
+                  ? 'Введите тот же код или пароль еще раз для подтверждения.'
+                  : 'Пароль будет запрашиваться при каждом открытии приложения на этом устройстве.'}
+              </p>
+            </div>
+
+            <div class="w-full max-w-[290px] pt-3 space-y-3">
+              <input
+                id="lock-setup-input"
+                type="password"
+                inputmode="${lockState.useTextPassword ? 'text' : 'numeric'}"
+                autocomplete="new-password"
+                placeholder="${lockState.useTextPassword ? 'Придумайте пароль...' : 'Введите PIN-код (4–8 цифр)'}"
+                onkeydown="if(event.key==='Enter') submitLockSetup()"
+                class="w-full bg-white border border-black/10 px-4 py-3.5 rounded-2xl text-center text-[18px] font-bold tracking-widest focus:outline-none focus:border-[#007AFF] shadow-sm"
+              />
+              <button onclick="submitLockSetup()" class="ios-press w-full bg-[#007AFF] text-white font-bold text-[15px] py-3.5 rounded-2xl shadow-sm">
+                ${isConfirm ? 'Сохранить и войти' : 'Продолжить'}
+              </button>
+              ${isConfirm ? `
+                <button onclick="resetLockSetupStep()" class="text-[13px] font-semibold text-[#8E8E93] py-1">
+                  Назад
+                </button>
+              ` : `
+                <button onclick="toggleLockInputMode()" class="text-[12px] font-semibold text-[#007AFF] py-1">
+                  ${lockState.useTextPassword ? 'Использовать цифровой PIN-код' : 'Использовать буквенно-цифровой пароль'}
+                </button>
+              `}
+            </div>
+          </div>
+
+          <div class="text-center text-[11px] text-[#8E8E93]">
+            Защита базы воспитанников, расписания и финансов
+          </div>
+        `;
+        setTimeout(() => {
+          const inp = document.getElementById('lock-setup-input');
+          if (inp) inp.focus();
+        }, 60);
+        return;
+      }
+
+      // Если пароль установлен — экран разблокировки при входе
+      if (auth.isText) {
+        screen.innerHTML = `
+          <div class="flex flex-col items-center text-center pt-6 space-y-3">
+            ${getTigrumLogoImgHtml('w-20 h-16 object-contain')}
+            <div>
+              <h2 class="text-[22px] font-extrabold text-black">ДЦ «Тигрум» заблокирован</h2>
+              <p class="text-[13px] text-[#8E8E93] mt-1">Введите пароль администратора для входа</p>
+            </div>
+            <div id="lock-shake-box" class="w-full max-w-[290px] pt-4 space-y-3">
+              <input
+                id="lock-unlock-text-input"
+                type="password"
+                autocomplete="current-password"
+                placeholder="Введите пароль..."
+                onkeydown="if(event.key==='Enter') submitTextUnlock()"
+                class="w-full bg-white border border-black/10 px-4 py-3.5 rounded-2xl text-center text-[17px] font-bold focus:outline-none focus:border-[#007AFF] shadow-sm"
+              />
+              <button onclick="submitTextUnlock()" class="ios-press w-full bg-[#007AFF] text-white font-bold text-[15px] py-3.5 rounded-2xl shadow-sm">
+                Войти в приложение
+              </button>
+            </div>
+          </div>
+          <div class="text-center text-[11px] text-[#8E8E93]">
+            Детский развивающий центр «Тигрум»
+          </div>
+        `;
+        setTimeout(() => {
+          const inp = document.getElementById('lock-unlock-text-input');
+          if (inp) inp.focus();
+        }, 60);
+        return;
+      }
+
+      // Цифровая iOS-клавиатура для PIN-кода
+      const pinLen = auth.secret.length;
+      const dotsHtml = Array.from({ length: pinLen }).map((_, idx) => {
+        const filled = idx < lockState.enteredPin.length;
+        return `<span class="w-3.5 h-3.5 rounded-full border-2 transition-all ${filled ? 'bg-black border-black scale-110' : 'border-black/30 bg-transparent'}"></span>`;
+      }).join('');
+
+      const digits = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      screen.innerHTML = `
+        <div class="flex flex-col items-center text-center pt-2 space-y-2">
+          ${getTigrumLogoImgHtml('w-16 h-14 object-contain')}
+          <h2 class="text-[20px] font-extrabold text-black">Введите PIN-код</h2>
+          <p class="text-[12px] text-[#8E8E93]">Детский развивающий центр «Тигрум»</p>
+          <div id="lock-shake-box" class="flex items-center justify-center gap-3.5 pt-3 pb-1">
+            ${dotsHtml}
+          </div>
+        </div>
+
+        <div class="w-full max-w-[270px] mx-auto grid grid-cols-3 gap-3.5 pb-2">
+          ${digits.map(d => `
+            <button onclick="pressPinDigit('${d}')" class="ios-press h-16 rounded-full bg-white shadow-sm border border-black/5 text-[24px] font-semibold text-black flex items-center justify-center">
+              ${d}
+            </button>
+          `).join('')}
+          <div class="h-16"></div>
+          <button onclick="pressPinDigit('0')" class="ios-press h-16 rounded-full bg-white shadow-sm border border-black/5 text-[24px] font-semibold text-black flex items-center justify-center">
+            0
+          </button>
+          <button onclick="backspacePinDigit()" class="ios-press h-16 rounded-full text-[14px] font-semibold text-[#3C3C43] flex items-center justify-center">
+            Стереть
+          </button>
+        </div>
+      `;
+    }
+
+    function toggleLockInputMode() {
+      lockState.useTextPassword = !lockState.useTextPassword;
+      renderLockScreen();
+    }
+
+    function resetLockSetupStep() {
+      lockState.setupStep = 'create';
+      lockState.tempFirstPin = '';
+      renderLockScreen();
+    }
+
+    function submitLockSetup() {
+      const inp = document.getElementById('lock-setup-input');
+      const val = inp ? inp.value.trim() : '';
+
+      if (!lockState.useTextPassword && !/^\d{4,8}$/.test(val)) {
+        showToast('PIN-код должен состоять из 4–8 цифр', 'warning');
+        return;
+      }
+      if (lockState.useTextPassword && val.length < 4) {
+        showToast('Пароль должен содержать минимум 4 символа', 'warning');
+        return;
+      }
+
+      if (lockState.setupStep === 'create') {
+        lockState.tempFirstPin = val;
+        lockState.setupStep = 'confirm';
+        renderLockScreen();
+      } else {
+        if (val !== lockState.tempFirstPin) {
+          showToast('Пароли не совпадают, попробуйте снова', 'error');
+          lockState.setupStep = 'create';
+          lockState.tempFirstPin = '';
+          renderLockScreen();
+          return;
+        }
+        saveAuthConfig(val, lockState.useTextPassword);
+        lockState.isUnlocked = true;
+        document.getElementById('lock-screen').classList.add('hidden');
+        showToast('Пароль входа установлен', 'success');
+      }
+    }
+
+    function triggerWrongPasswordFeedback() {
+      const box = document.getElementById('lock-shake-box');
+      if (box) {
+        box.classList.remove('shake-animate');
+        void box.offsetWidth;
+        box.classList.add('shake-animate');
+      }
+      showToast('Неверный пароль', 'error');
+    }
+
+    function pressPinDigit(digit) {
+      const auth = getAuthConfig();
+      if (!auth || auth.isText) return;
+      if (lockState.enteredPin.length >= auth.secret.length) return;
+
+      lockState.enteredPin += digit;
+      renderLockScreen();
+
+      if (lockState.enteredPin.length === auth.secret.length) {
+        setTimeout(() => {
+          if (lockState.enteredPin === auth.secret) {
+            lockState.isUnlocked = true;
+            lockState.enteredPin = '';
+            document.getElementById('lock-screen').classList.add('hidden');
+            showToast('Добро пожаловать в ДЦ «Тигрум»', 'success');
+          } else {
+            lockState.enteredPin = '';
+            renderLockScreen();
+            triggerWrongPasswordFeedback();
+          }
+        }, 120);
+      }
+    }
+
+    function backspacePinDigit() {
+      if (lockState.enteredPin.length > 0) {
+        lockState.enteredPin = lockState.enteredPin.slice(0, -1);
+        renderLockScreen();
+      }
+    }
+
+    function submitTextUnlock() {
+      const auth = getAuthConfig();
+      const inp = document.getElementById('lock-unlock-text-input');
+      const val = inp ? inp.value : '';
+      if (auth && val === auth.secret) {
+        lockState.isUnlocked = true;
+        document.getElementById('lock-screen').classList.add('hidden');
+        showToast('Добро пожаловать в ДЦ «Тигрум»', 'success');
+      } else {
+        if (inp) inp.value = '';
+        triggerWrongPasswordFeedback();
+      }
+    }
+
+    function openChangePasswordModal() {
+      const auth = getAuthConfig();
+      const isText = auth ? auth.isText : false;
+      openModal(`
+        <div class="px-4 py-3.5 bg-white border-b border-black/5 flex items-center justify-between shrink-0">
+          <button onclick="closeModal()" class="text-[15px] text-[#007AFF] font-medium">Отмена</button>
+          <h3 class="text-[16px] font-bold text-black">Смена пароля входа</h3>
+          <button onclick="saveChangedPassword()" class="text-[15px] text-[#007AFF] font-bold">Сохранить</button>
+        </div>
+        <div class="p-4 space-y-3">
+          <div class="ios-card p-4 space-y-3">
+            <div>
+              <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Текущий пароль *</label>
+              <input id="cp-old" type="password" placeholder="Введите текущий пароль" class="w-full bg-[#F2F2F7] px-3.5 py-2.5 rounded-xl text-[14px] focus:outline-none" />
+            </div>
+            <div>
+              <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Тип нового пароля</label>
+              <select id="cp-type" class="w-full bg-[#F2F2F7] px-3.5 py-2.5 rounded-xl text-[14px] font-semibold focus:outline-none">
+                <option value="pin" ${!isText ? 'selected' : ''}>Цифровой PIN-код (4–8 цифр)</option>
+                <option value="text" ${isText ? 'selected' : ''}>Буквенно-цифровой пароль</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Новый пароль *</label>
+              <input id="cp-new" type="password" placeholder="Введите новый пароль" class="w-full bg-[#F2F2F7] px-3.5 py-2.5 rounded-xl text-[14px] focus:outline-none" />
+            </div>
+            <div>
+              <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Повторите новый пароль *</label>
+              <input id="cp-confirm" type="password" placeholder="Повторите новый пароль" class="w-full bg-[#F2F2F7] px-3.5 py-2.5 rounded-xl text-[14px] focus:outline-none" />
+            </div>
+          </div>
+        </div>
+      `);
+    }
+
+    function saveChangedPassword() {
+      const auth = getAuthConfig();
+      const oldVal = document.getElementById('cp-old').value;
+      const typeVal = document.getElementById('cp-type').value;
+      const newVal = document.getElementById('cp-new').value.trim();
+      const confirmVal = document.getElementById('cp-confirm').value.trim();
+
+      if (auth && oldVal !== auth.secret) {
+        showToast('Текущий пароль введен неверно', 'error');
+        return;
+      }
+      if (typeVal === 'pin' && !/^\d{4,8}$/.test(newVal)) {
+        showToast('PIN-код должен состоять из 4–8 цифр', 'warning');
+        return;
+      }
+      if (typeVal === 'text' && newVal.length < 4) {
+        showToast('Пароль должен содержать минимум 4 символа', 'warning');
+        return;
+      }
+      if (newVal !== confirmVal) {
+        showToast('Новые пароли не совпадают', 'error');
+        return;
+      }
+
+      saveAuthConfig(newVal, typeVal === 'text');
+      closeModal();
+      showToast('Пароль входа успешно изменен', 'success');
+    }
+
+    // =========================================================================
+    // 3. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+    // =========================================================================
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function formatRub(amount) {
+      const num = Number(amount) || 0;
+      return num.toLocaleString('ru-RU') + ' ₽';
+    }
+
+    function getInitials(fullName) {
+      if (!fullName) return '?';
+      const parts = fullName.trim().split(/\s+/);
+      if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+
+    function makeShortName(fullName) {
+      const parts = fullName.trim().split(/\s+/);
+      if (parts.length === 1) return parts[0];
+      if (parts.length === 2) return `${parts[0]} ${parts[1][0]}.`;
+      return `${parts[0]} ${parts[1][0]}.${parts[2][0]}.`;
+    }
+
+    function getTeacherById(id) {
+      return appData.teachers.find(t => t.id === id) || null;
+    }
+
+    function getChildById(id) {
+      return appData.children.find(c => c.id === id) || null;
+    }
+
+    function getLessonRate(lesson) {
+      if (lesson && lesson.customPrice !== null && lesson.customPrice !== undefined && lesson.customPrice !== '') {
+        return Number(lesson.customPrice) || 0;
+      }
+      const teacher = getTeacherById(lesson ? lesson.teacherId : '');
+      if (teacher && teacher.rates && lesson && teacher.rates[lesson.subject] !== undefined) {
+        return Number(teacher.rates[lesson.subject]) || 0;
+      }
+      return 0;
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const bgMap = {
+        success: 'bg-emerald-600 text-white',
+        warning: 'bg-amber-500 text-white',
+        error: 'bg-rose-600 text-white',
+        info: 'bg-black/90 text-white'
+      };
+      const el = document.createElement('div');
+      el.className = `${bgMap[type] || bgMap.info} px-4 py-2.5 rounded-2xl shadow-lg text-[13px] font-semibold text-center backdrop-blur-md transition-all duration-200`;
+      el.textContent = message;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(-6px)';
+        setTimeout(() => el.remove(), 220);
+      }, 2400);
+    }
+
+    // =========================================================================
+    // 4. МОДАЛЬНЫЕ ОКНА И НАВИГАЦИЯ ПО ВКЛАДКАМ
+    // =========================================================================
+    function openModal(htmlContent) {
+      const root = document.getElementById('modal-root');
+      const sheet = document.getElementById('modal-sheet');
+      sheet.innerHTML = htmlContent;
+      root.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      const root = document.getElementById('modal-root');
+      root.classList.add('hidden');
+    }
+
+    function switchTab(tabName) {
+      uiState.activeTab = tabName;
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        const isActive = btn.getAttribute('data-tab') === tabName;
+        btn.classList.toggle('text-[#007AFF]', isActive);
+        btn.classList.toggle('text-[#8E8E93]', !isActive);
+      });
+
+      const titleEl = document.getElementById('header-title');
+      const actionEl = document.getElementById('header-action');
+
+      if (tabName === 'schedule') {
+        titleEl.textContent = 'Расписание';
+        actionEl.innerHTML = `
+          <button onclick="openLessonFormModal()" class="ios-press bg-[#007AFF] text-white text-[13px] font-semibold px-3.5 py-2 rounded-full shadow-sm">
+            + Занятие
+          </button>
+        `;
+        renderScheduleTab();
+      } else if (tabName === 'children') {
+        titleEl.textContent = 'Дети';
+        actionEl.innerHTML = `
+          <button onclick="openChildFormModal()" class="ios-press bg-[#007AFF] text-white text-[13px] font-semibold px-3.5 py-2 rounded-full shadow-sm">
+            + Ребенок
+          </button>
+        `;
+        renderChildrenTab();
+      } else if (tabName === 'teachers') {
+        titleEl.textContent = 'Педагоги';
+        actionEl.innerHTML = `
+          <button onclick="openTeacherFormModal()" class="ios-press bg-[#007AFF] text-white text-[13px] font-semibold px-3.5 py-2 rounded-full shadow-sm">
+            + Педагог
+          </button>
+        `;
+        renderTeachersTab();
+      } else if (tabName === 'finance') {
+        titleEl.textContent = 'Финансы и ЗП';
+        actionEl.innerHTML = `
+          <button onclick="lockAppNow()" class="ios-press bg-black/5 text-[#3C3C43] text-[12px] font-semibold px-3 py-2 rounded-full">
+            🔒 Блок
+          </button>
+        `;
+        renderFinanceTab();
+      }
+    }
+
+    // =========================================================================
+    // 5. ВКЛАДКА «РАСПИСАНИЕ» И КАЛЕНДАРЬ ЗАНЯТИЙ
+    // =========================================================================
+    function selectCalendarDate(isoDate) {
+      uiState.selectedDate = isoDate;
+      const d = parseIsoDate(isoDate);
+      uiState.calendarYear = d.getFullYear();
+      uiState.calendarMonth = d.getMonth();
+      renderScheduleTab();
+    }
+
+    function shiftCalendarMonth(delta) {
+      let m = uiState.calendarMonth + delta;
+      let y = uiState.calendarYear;
+      if (m < 0) {
+        m = 11;
+        y -= 1;
+      } else if (m > 11) {
+        m = 0;
+        y += 1;
+      }
+      uiState.calendarMonth = m;
+      uiState.calendarYear = y;
+      const firstOfMonth = new Date(y, m, 1);
+      uiState.selectedDate = toIsoDateStr(firstOfMonth);
+      renderScheduleTab();
+    }
+
+    function jumpToToday() {
+      const now = new Date();
+      uiState.selectedDate = toIsoDateStr(now);
+      uiState.calendarYear = now.getFullYear();
+      uiState.calendarMonth = now.getMonth();
+      renderScheduleTab();
+    }
+
+    function setScheduleFilter(subject) {
+      uiState.scheduleSubjectFilter = subject;
+      renderScheduleTab();
+    }
+
+    function getLessonsForDate(isoDate) {
+      const dateObj = parseIsoDate(isoDate);
+      const dayKey = getDayKeyFromDate(dateObj);
+      return appData.lessons
+        .filter(l => (l.specificDate ? l.specificDate === isoDate : l.day === dayKey))
+        .sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
+    }
+
+    function getChildAttendanceOnDate(isoDate, lessonId, childId) {
+      if (
+        appData.attendanceLog[isoDate] &&
+        appData.attendanceLog[isoDate][lessonId] &&
+        appData.attendanceLog[isoDate][lessonId][childId]
+      ) {
+        return appData.attendanceLog[isoDate][lessonId][childId];
+      }
+      return 'planned';
+    }
+
+    function setAttendance(lessonId, childId, newStatus) {
+      const isoDate = uiState.selectedDate;
+      const lesson = appData.lessons.find(l => l.id === lessonId);
+      if (!lesson) return;
+
+      const oldStatus = getChildAttendanceOnDate(isoDate, lessonId, childId);
+      if (oldStatus === newStatus) return;
+
+      const rate = getLessonRate(lesson);
+      const child = getChildById(childId);
+
+      if (child) {
+        if (oldStatus !== 'present' && newStatus === 'present') {
+          child.balance = (Number(child.balance) || 0) - rate;
+        } else if (oldStatus === 'present' && newStatus !== 'present') {
+          child.balance = (Number(child.balance) || 0) + rate;
+        }
+      }
+
+      if (!appData.attendanceLog[isoDate]) {
+        appData.attendanceLog[isoDate] = {};
+      }
+      if (!appData.attendanceLog[isoDate][lessonId]) {
+        appData.attendanceLog[isoDate][lessonId] = {};
+      }
+      appData.attendanceLog[isoDate][lessonId][childId] = newStatus;
+
+      saveAppData();
+      renderScheduleTab();
+
+      if (child) {
+        if (newStatus === 'present') {
+          showToast(`${child.name} (${formatHumanDate(isoDate)}): был, −${formatRub(rate)}`, 'success');
+        } else if (newStatus === 'absent') {
+          showToast(`${child.name}: пропуск`, 'warning');
+        } else {
+          showToast(`${child.name}: статус «План»`, 'info');
+        }
+      }
+    }
+
+    function buildMonthCalendarHtml() {
+      const year = uiState.calendarYear;
+      const month = uiState.calendarMonth;
+      const todayIso = toIsoDateStr(new Date());
+
+      const firstDay = new Date(year, month, 1);
+      const startWeekday = (firstDay.getDay() + 6) % 7;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      let cellsHtml = '';
+      for (let i = 0; i < startWeekday; i++) {
+        cellsHtml += `<div class="h-9"></div>`;
+      }
+
+      for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) {
+        const dObj = new Date(year, month, dayNum);
+        const iso = toIsoDateStr(dObj);
+        const isSelected = iso === uiState.selectedDate;
+        const isToday = iso === todayIso;
+        const dayLessons = getLessonsForDate(iso);
+        const hasLessons = dayLessons.length > 0;
+
+        let hasPresent = false;
+        if (appData.attendanceLog[iso]) {
+          Object.values(appData.attendanceLog[iso]).forEach(lessonMap => {
+            if (Object.values(lessonMap).includes('present')) hasPresent = true;
+          });
+        }
+
+        cellsHtml += `
+          <button
+            onclick="selectCalendarDate('${iso}')"
+            class="ios-press relative h-9 rounded-xl flex flex-col items-center justify-center text-[13px] font-semibold transition-all ${
+              isSelected
+                ? 'bg-[#007AFF] text-white shadow-sm'
+                : isToday
+                ? 'bg-[#007AFF]/10 text-[#007AFF] font-bold'
+                : 'text-black hover:bg-black/5'
+            }"
+          >
+            <span>${dayNum}</span>
+            ${hasLessons ? `
+              <span class="w-1.5 h-1.5 rounded-full mt-0.5 ${
+                isSelected ? 'bg-white' : hasPresent ? 'bg-emerald-500' : 'bg-indigo-400'
+              }"></span>
+            ` : '<span class="h-1.5 mt-0.5"></span>'}
+          </button>
+        `;
+      }
+
+      return `
+        <div class="ios-card p-3.5 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <button onclick="shiftCalendarMonth(-1)" class="ios-press w-8 h-8 rounded-xl bg-[#F2F2F7] flex items-center justify-center text-black font-bold">‹</button>
+              <span class="text-[15px] font-bold text-black px-1">${MONTHS_RU[month]} ${year}</span>
+              <button onclick="shiftCalendarMonth(1)" class="ios-press w-8 h-8 rounded-xl bg-[#F2F2F7] flex items-center justify-center text-black font-bold">›</button>
+            </div>
+            <button onclick="jumpToToday()" class="ios-press text-[12px] font-semibold text-[#007AFF] bg-[#007AFF]/10 px-2.5 py-1 rounded-lg">
+              Сегодня
+            </button>
+          </div>
+
+          <div class="grid grid-cols-7 text-center text-[10px] font-bold uppercase text-[#8E8E93]">
+            <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span class="text-rose-400">Сб</span><span class="text-rose-400">Вс</span>
+          </div>
+
+          <div class="grid grid-cols-7 gap-1">
+            ${cellsHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderScheduleTab() {
+      const main = document.getElementById('main-content');
+      const calendarHtml = buildMonthCalendarHtml();
+      const dayLessons = getLessonsForDate(uiState.selectedDate);
+
+      const filteredLessons = uiState.scheduleSubjectFilter === 'Все'
+        ? dayLessons
+        : dayLessons.filter(l => l.subject === uiState.scheduleSubjectFilter);
+
+      let dayEarned = 0;
+      let dayExpected = 0;
+      let dayPresentKids = 0;
+      let dayTotalKids = 0;
+
+      dayLessons.forEach(lesson => {
+        const rate = getLessonRate(lesson);
+        lesson.enrollments.forEach(e => {
+          dayTotalKids += 1;
+          dayExpected += rate;
+          const status = getChildAttendanceOnDate(uiState.selectedDate, lesson.id, e.childId);
+          if (status === 'present') {
+            dayPresentKids += 1;
+            dayEarned += rate;
+          }
+        });
+      });
+
+      if (appData.lessons.length === 0) {
+        main.innerHTML = `
+          ${calendarHtml}
+          <div class="ios-card p-6 text-center space-y-4">
+            <div class="flex justify-center">
+              ${getTigrumLogoImgHtml('w-28 h-24 object-contain')}
+            </div>
+            <div>
+              <h2 class="text-[18px] font-bold text-black">Добро пожаловать в ДЦ «Тигрум»!</h2>
+              <p class="text-[13px] text-[#8E8E93] mt-1 leading-relaxed">
+                База очищена и готова к работе. Добавьте преподавателей со ставками и процентом зарплаты, карточки детей и составьте расписание.
+              </p>
+            </div>
+            <div class="space-y-2 pt-1">
+              <button onclick="openTeacherFormModal()" class="ios-press w-full bg-indigo-50 text-indigo-700 font-semibold text-[14px] py-3 rounded-xl border border-indigo-100">
+                1. + Добавить преподавателя и тарифы
+              </button>
+              <button onclick="openChildFormModal()" class="ios-press w-full bg-emerald-50 text-emerald-700 font-semibold text-[14px] py-3 rounded-xl border border-emerald-100">
+                2. + Добавить карточку ребенка
+              </button>
+              <button onclick="openLessonFormModal()" class="ios-press w-full bg-[#007AFF] text-white font-semibold text-[14px] py-3 rounded-xl shadow-sm">
+                3. + Создать занятие в расписании
+              </button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const usedSubjects = ['Все', ...Array.from(new Set(appData.lessons.map(l => l.subject)))];
+      const filtersHtml = `
+        <div class="flex gap-2 overflow-x-auto no-scrollbar pb-0.5">
+          ${usedSubjects.map(subj => {
+            const active = uiState.scheduleSubjectFilter === subj;
+            return `
+              <button onclick="setScheduleFilter('${escapeHtml(subj)}')" class="ios-press shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-colors ${active ? 'bg-black text-white' : 'bg-white text-[#3C3C43] border border-black/5'}">
+                ${escapeHtml(subj)}
+              </button>
+            `;
+          }).join('')}
+        </div>
+      `;
+
+      const summaryHtml = `
+        <div class="ios-card p-4 bg-gradient-to-br from-white to-indigo-50/40">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <span class="text-[12px] font-semibold text-[#8E8E93]">${formatHumanDate(uiState.selectedDate)} • Выручка</span>
+              <div class="text-[24px] font-extrabold text-black tracking-tight mt-0.5">${formatRub(dayEarned)}</div>
+            </div>
+            ${getTigrumLogoImgHtml('w-14 h-12 object-contain opacity-90')}
+          </div>
+          <div class="flex items-center justify-between text-[12px] pt-2 border-t border-black/5 text-[#8E8E93]">
+            <span>План дня: <strong class="text-black">${formatRub(dayExpected)}</strong></span>
+            <span>Посетили: <strong class="text-emerald-600">${dayPresentKids} из ${dayTotalKids}</strong></span>
+          </div>
+        </div>
+      `;
+
+      const lessonsHtml = filteredLessons.length === 0
+        ? `
+          <div class="ios-card p-6 text-center space-y-2">
+            <p class="text-[15px] font-semibold text-black">На ${formatHumanDate(uiState.selectedDate)} занятий нет</p>
+            <p class="text-[13px] text-[#8E8E93]">Выберите другой день в календаре или нажмите «+ Занятие».</p>
+          </div>
+        `
+        : filteredLessons.map(lesson => {
+            const teacher = getTeacherById(lesson.teacherId);
+            const rate = getLessonRate(lesson);
+            const presentCount = lesson.enrollments.filter(e => getChildAttendanceOnDate(uiState.selectedDate, lesson.id, e.childId) === 'present').length;
+            const lessonRevenue = presentCount * rate;
+
+            return `
+              <div class="ios-card p-4 space-y-3">
+                <div class="flex items-start justify-between gap-2">
+                  <div>
+                    <div class="flex flex-wrap items-center gap-1.5">
+                      <span class="text-[13px] font-bold text-[#007AFF] bg-[#007AFF]/10 px-2.5 py-0.5 rounded-lg">
+                        ${escapeHtml(lesson.startTime)} – ${escapeHtml(lesson.endTime)}
+                      </span>
+                      <span class="text-[11px] font-medium text-[#8E8E93]">${escapeHtml(lesson.room || 'Кабинет')}</span>
+                      ${lesson.specificDate ? `<span class="text-[10px] font-semibold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md">Разовое</span>` : ''}
+                    </div>
+                    <h3 class="text-[17px] font-bold text-black mt-1.5">${escapeHtml(lesson.subject)}</h3>
+                    <p class="text-[13px] text-[#3C3C43] mt-0.5">
+                      Педагог: <span class="font-semibold">${teacher ? escapeHtml(teacher.shortName) : 'Не назначен'}</span>
+                    </p>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <button onclick="openLessonFormModal('${lesson.id}')" class="ios-press text-[12px] font-semibold text-[#007AFF] bg-[#007AFF]/10 px-2.5 py-1 rounded-lg mb-1">
+                      Изм.
+                    </button>
+                    <div class="text-[15px] font-bold text-emerald-600">${formatRub(lessonRevenue)}</div>
+                    <div class="text-[11px] text-[#8E8E93]">${formatRub(rate)} / чел.</div>
+                  </div>
+                </div>
+
+                <div class="border-t border-black/5 pt-2.5 space-y-2">
+                  ${lesson.enrollments.length === 0
+                    ? `<p class="text-[12px] text-[#8E8E93] italic">Дети еще не записаны на это занятие</p>`
+                    : lesson.enrollments.map(enr => {
+                        const child = getChildById(enr.childId);
+                        if (!child) return '';
+                        const bal = Number(child.balance) || 0;
+                        const status = getChildAttendanceOnDate(uiState.selectedDate, lesson.id, child.id);
+                        return `
+                          <div class="flex items-center justify-between gap-2 bg-[#F2F2F7]/80 px-3 py-2 rounded-xl">
+                            <div onclick="openChildDetailModal('${child.id}')" class="min-w-0 cursor-pointer">
+                              <div class="text-[14px] font-semibold text-black truncate">${escapeHtml(child.name)}</div>
+                              <div class="text-[11px] ${bal < 0 ? 'text-rose-600 font-semibold' : 'text-[#8E8E93]'}">
+                                Баланс: ${formatRub(bal)}
+                              </div>
+                            </div>
+                            <div class="flex items-center bg-white p-0.5 rounded-lg border border-black/5 shrink-0">
+                              <button onclick="setAttendance('${lesson.id}', '${child.id}', 'present')" class="px-2 py-1 rounded-md text-[11px] font-semibold transition-colors ${status === 'present' ? 'bg-emerald-500 text-white' : 'text-[#8E8E93]'}">
+                                Был
+                              </button>
+                              <button onclick="setAttendance('${lesson.id}', '${child.id}', 'absent')" class="px-2 py-1 rounded-md text-[11px] font-semibold transition-colors ${status === 'absent' ? 'bg-rose-500 text-white' : 'text-[#8E8E93]'}">
+                                Пропуск
+                              </button>
+                              <button onclick="setAttendance('${lesson.id}', '${child.id}', 'planned')" class="px-2 py-1 rounded-md text-[11px] font-semibold transition-colors ${status === 'planned' ? 'bg-slate-600 text-white' : 'text-[#8E8E93]'}">
+                                План
+                              </button>
+                            </div>
+                          </div>
+                        `;
+                      }).join('')
+                  }
+                </div>
+              </div>
+            `;
+          }).join('');
+
+      main.innerHTML = calendarHtml + filtersHtml + summaryHtml + lessonsHtml;
+    }
+
+    // =========================================================================
+    // 6. ВКЛАДКА «ДЕТИ» (КАРТОЧКИ ВОСПИТАННИКОВ И АБОНЕМЕНТЫ)
+    // =========================================================================
+    function handleChildSearch(val) {
+      uiState.childSearch = val;
+      renderChildrenTab();
+    }
+
+    function renderChildrenTab() {
+      const main = document.getElementById('main-content');
+
+      if (appData.children.length === 0) {
+        main.innerHTML = `
+          <div class="ios-card p-6 text-center space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto font-bold text-xl">
+              🧒
+            </div>
+            <h3 class="text-[17px] font-bold text-black">Список детей пока пуст</h3>
+            <p class="text-[13px] text-[#8E8E93]">
+              Добавьте карточки воспитанников, укажите контакты родителей и стартовый баланс абонемента.
+            </p>
+            <button onclick="openChildFormModal()" class="ios-press bg-[#007AFF] text-white font-semibold text-[14px] px-5 py-2.5 rounded-xl">
+              + Добавить ребенка
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      const query = uiState.childSearch.trim().toLowerCase();
+      const filtered = query
+        ? appData.children.filter(c =>
+            (c.name || '').toLowerCase().includes(query) ||
+            (c.parentName || '').toLowerCase().includes(query)
+          )
+        : appData.children;
+
+      const searchHtml = `
+        <div class="ios-card px-3.5 py-2.5 flex items-center gap-2">
+          <svg class="w-4 h-4 text-[#8E8E93]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="text"
+            value="${escapeHtml(uiState.childSearch)}"
+            oninput="handleChildSearch(this.value)"
+            placeholder="Поиск по имени ребенка или родителя..."
+            class="w-full text-[14px] bg-transparent focus:outline-none"
+          />
+        </div>
+      `;
+
+      const listHtml = filtered.length === 0
+        ? `<div class="ios-card p-5 text-center text-[13px] text-[#8E8E93]">По вашему запросу ничего не найдено</div>`
+        : filtered.map(child => {
+            const bal = Number(child.balance) || 0;
+            const childLessons = appData.lessons.filter(l => l.enrollments.some(e => e.childId === child.id));
+            return `
+              <div onclick="openChildDetailModal('${child.id}')" class="ios-card ios-press p-4 flex items-center justify-between gap-3 cursor-pointer">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-12 h-12 rounded-2xl ${child.color || 'bg-emerald-600'} text-white font-bold text-[16px] flex items-center justify-center shrink-0">
+                    ${getInitials(child.name)}
+                  </div>
+                  <div class="min-w-0">
+                    <h3 class="text-[16px] font-bold text-black truncate">${escapeHtml(child.name)}</h3>
+                    <p class="text-[12px] text-[#8E8E93] truncate">
+                      ${child.age ? `${escapeHtml(child.age)} • ` : ''}${escapeHtml(child.parentName || 'Родитель не указан')}
+                    </p>
+                    <p class="text-[11px] text-indigo-600 font-medium mt-0.5">
+                      Занятий в графике: ${childLessons.length}
+                    </p>
+                  </div>
+                </div>
+                <div class="text-right shrink-0">
+                  <div class="text-[15px] font-extrabold ${bal < 0 ? 'text-rose-600' : 'text-emerald-600'}">
+                    ${formatRub(bal)}
+                  </div>
+                  <span class="text-[11px] text-[#8E8E93]">Абонемент</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+
+      main.innerHTML = searchHtml + listHtml;
+    }
+
+    // =========================================================================
+    // 7. ВКЛАДКА «ПЕДАГОГИ» (МАТРИЦА ТАРИФОВ ПРЕПОДАВАТЕЛЬ × НАПРАВЛЕНИЕ)
+    // =========================================================================
+    function renderTeachersTab() {
+      const main = document.getElementById('main-content');
+
+      if (appData.teachers.length === 0) {
+        main.innerHTML = `
+          <div class="ios-card p-6 text-center space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center mx-auto font-bold text-xl">
+              🎓
+            </div>
+            <h3 class="text-[17px] font-bold text-black">Педагоги еще не добавлены</h3>
+            <p class="text-[13px] text-[#8E8E93]">
+              Добавьте преподавателей, настройте стоимость каждого направления и процент начисления зарплаты.
+            </p>
+            <button onclick="openTeacherFormModal()" class="ios-press bg-[#007AFF] text-white font-semibold text-[14px] px-5 py-2.5 rounded-xl">
+              + Добавить преподавателя
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      const cardsHtml = appData.teachers.map(teacher => {
+        const ratesEntries = Object.entries(teacher.rates || {});
+        const teacherLessons = appData.lessons.filter(l => l.teacherId === teacher.id);
+        const salaryPct = teacher.salaryPercent !== undefined ? Number(teacher.salaryPercent) : 50;
+
+        return `
+          <div class="ios-card p-4 space-y-3">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-12 h-12 rounded-2xl ${teacher.color || 'bg-indigo-600'} text-white font-bold text-[16px] flex items-center justify-center shrink-0">
+                  ${getInitials(teacher.name)}
+                </div>
+                <div class="min-w-0">
+                  <h3 class="text-[16px] font-bold text-black truncate">${escapeHtml(teacher.name)}</h3>
+                  <p class="text-[12px] text-[#8E8E93] truncate">${escapeHtml(teacher.specialty || 'Педагог центра')}</p>
+                  <div class="flex flex-wrap items-center gap-2 mt-1">
+                    <span class="text-[11px] font-semibold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-md">
+                      Ставка ЗП: ${salaryPct}%
+                    </span>
+                    ${teacher.phone ? `<span class="text-[11px] text-[#007AFF]">${escapeHtml(teacher.phone)}</span>` : ''}
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button onclick="openTeacherFormModal('${teacher.id}')" class="ios-press text-[12px] font-semibold text-[#007AFF] bg-[#007AFF]/10 px-2.5 py-1.5 rounded-xl">
+                  Тарифы и ЗП
+                </button>
+              </div>
+            </div>
+
+            <div class="bg-[#F2F2F7] rounded-xl p-3 space-y-2">
+              <div class="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider text-[#8E8E93]">
+                <span>Направление</span>
+                <span>Цена / Доля педагога</span>
+              </div>
+              ${ratesEntries.length === 0
+                ? `<p class="text-[12px] text-[#8E8E93]">Ставки не заданы. Нажмите «Тарифы и ЗП».</p>`
+                : ratesEntries.map(([subj, price]) => {
+                    const teacherShare = Math.round((Number(price) * salaryPct) / 100);
+                    return `
+                      <div class="flex items-center justify-between text-[13px] py-1 border-b border-black/5 last:border-0">
+                        <span class="font-medium text-black">${escapeHtml(subj)}</span>
+                        <div class="text-right">
+                          <span class="font-bold text-emerald-700">${formatRub(price)}</span>
+                          <span class="text-[11px] text-[#8E8E93] ml-1">(ЗП: ${formatRub(teacherShare)})</span>
+                        </div>
+                      </div>
+                    `;
+                  }).join('')
+              }
+            </div>
+
+            <div class="flex items-center justify-between text-[12px] text-[#8E8E93] pt-0.5">
+              <span>Занятий в сетке: <strong class="text-black">${teacherLessons.length}</strong></span>
+              <button onclick="deleteTeacher('${teacher.id}')" class="text-rose-500 font-medium">Удалить</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      main.innerHTML = cardsHtml;
+    }
+
+    // =========================================================================
+    // 8. ВКЛАДКА «ФИНАНСЫ» И РАСЧЕТ ЗАРПЛАТЫ ПРЕПОДАВАТЕЛЕЙ ПО МЕСЯЦАМ
+    // =========================================================================
+    function shiftFinanceMonth(delta) {
+      let m = uiState.financeMonth + delta;
+      let y = uiState.financeYear;
+      if (m < 0) {
+        m = 11;
+        y -= 1;
+      } else if (m > 11) {
+        m = 0;
+        y += 1;
+      }
+      uiState.financeMonth = m;
+      uiState.financeYear = y;
+      renderFinanceTab();
+    }
+
+    function calculateMonthlyPayroll(year, month) {
+      const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}-`;
+      let totalRevenue = 0;
+      let totalPayroll = 0;
+      let totalVisits = 0;
+
+      const byTeacher = {};
+      appData.teachers.forEach(t => {
+        const pct = t.salaryPercent !== undefined ? Number(t.salaryPercent) : 50;
+        byTeacher[t.id] = {
+          teacher: t,
+          salaryPercent: pct,
+          revenue: 0,
+          salary: 0,
+          visits: 0,
+          subjects: {}
+        };
+      });
+
+      Object.entries(appData.attendanceLog || {}).forEach(([isoDate, lessonsMap]) => {
+        if (!isoDate.startsWith(monthPrefix)) return;
+
+        Object.entries(lessonsMap || {}).forEach(([lessonId, childrenMap]) => {
+          const lesson = appData.lessons.find(l => l.id === lessonId);
+          if (!lesson) return;
+
+          const rate = getLessonRate(lesson);
+          const bucket = byTeacher[lesson.teacherId];
+
+          Object.entries(childrenMap || {}).forEach(([childId, status]) => {
+            if (status !== 'present') return;
+
+            totalRevenue += rate;
+            totalVisits += 1;
+
+            if (bucket) {
+              const teacherCut = Math.round((rate * bucket.salaryPercent) / 100);
+              bucket.revenue += rate;
+              bucket.salary += teacherCut;
+              bucket.visits += 1;
+              totalPayroll += teacherCut;
+
+              if (!bucket.subjects[lesson.subject]) {
+                bucket.subjects[lesson.subject] = { visits: 0, revenue: 0, salary: 0, rate };
+              }
+              bucket.subjects[lesson.subject].visits += 1;
+              bucket.subjects[lesson.subject].revenue += rate;
+              bucket.subjects[lesson.subject].salary += teacherCut;
+            }
+          });
+        });
+      });
+
+      return {
+        totalRevenue,
+        totalPayroll,
+        netCenter: totalRevenue - totalPayroll,
+        totalVisits,
+        teachersList: Object.values(byTeacher)
+      };
+    }
+
+    function renderFinanceTab() {
+      const main = document.getElementById('main-content');
+      const year = uiState.financeYear;
+      const month = uiState.financeMonth;
+      const report = calculateMonthlyPayroll(year, month);
+
+      const monthNavHtml = `
+        <div class="ios-card p-3 flex items-center justify-between">
+          <button onclick="shiftFinanceMonth(-1)" class="ios-press w-9 h-9 rounded-xl bg-[#F2F2F7] flex items-center justify-center text-black font-bold text-lg">‹</button>
+          <div class="text-center">
+            <div class="text-[11px] font-semibold uppercase tracking-wider text-[#8E8E93]">Расчетный период</div>
+            <div class="text-[16px] font-bold text-black">${MONTHS_RU[month]} ${year}</div>
+          </div>
+          <button onclick="shiftFinanceMonth(1)" class="ios-press w-9 h-9 rounded-xl bg-[#F2F2F7] flex items-center justify-center text-black font-bold text-lg">›</button>
+        </div>
+      `;
+
+      const kpiHtml = `
+        <div class="grid grid-cols-3 gap-2">
+          <div class="ios-card p-3">
+            <span class="text-[10px] font-bold uppercase text-[#8E8E93] block">Выручка</span>
+            <div class="text-[16px] font-extrabold text-black mt-1 truncate">${formatRub(report.totalRevenue)}</div>
+            <span class="text-[10px] text-[#8E8E93]">${report.totalVisits} виз.</span>
+          </div>
+          <div class="ios-card p-3 bg-indigo-50/60">
+            <span class="text-[10px] font-bold uppercase text-indigo-700 block">Фонд ЗП</span>
+            <div class="text-[16px] font-extrabold text-indigo-700 mt-1 truncate">${formatRub(report.totalPayroll)}</div>
+            <span class="text-[10px] text-indigo-600/80">К выплате</span>
+          </div>
+          <div class="ios-card p-3 bg-emerald-50/60">
+            <span class="text-[10px] font-bold uppercase text-emerald-700 block">Центру</span>
+            <div class="text-[16px] font-extrabold text-emerald-700 mt-1 truncate">${formatRub(report.netCenter)}</div>
+            <span class="text-[10px] text-emerald-600/80">Остаток</span>
+          </div>
+        </div>
+      `;
+
+      const payrollHtml = `
+        <div class="ios-card p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-[16px] font-bold text-black">Зарплата педагогов за ${MONTHS_RU[month].toLowerCase()}</h3>
+          </div>
+          ${report.teachersList.length === 0
+            ? `<p class="text-[13px] text-[#8E8E93]">Добавьте преподавателей и отмечайте посещения в календаре, чтобы сформировать ведомость зарплаты.</p>`
+            : report.teachersList.map(item => {
+                const subjEntries = Object.entries(item.subjects);
+                return `
+                  <div class="bg-[#F2F2F7] rounded-2xl p-3.5 space-y-2.5">
+                    <div class="flex items-start justify-between gap-2">
+                      <div>
+                        <div class="text-[15px] font-bold text-black">${escapeHtml(item.teacher.name)}</div>
+                        <div class="text-[11px] text-[#8E8E93] mt-0.5">
+                          Проведено визитов: <strong class="text-black">${item.visits}</strong> • Выручка: ${formatRub(item.revenue)}
+                        </div>
+                        <span class="inline-block mt-1 text-[11px] font-semibold bg-white text-indigo-700 px-2 py-0.5 rounded-md">
+                          Ставка ЗП: ${item.salaryPercent}% от стоимости занятия
+                        </span>
+                      </div>
+                      <div class="text-right shrink-0">
+                        <div class="text-[10px] font-semibold uppercase text-[#8E8E93]">К выплате</div>
+                        <div class="text-[18px] font-extrabold text-indigo-700">${formatRub(item.salary)}</div>
+                      </div>
+                    </div>
+
+                    ${subjEntries.length > 0 ? `
+                      <div class="border-t border-black/5 pt-2 space-y-1.5">
+                        ${subjEntries.map(([subjName, stat]) => `
+                          <div class="flex items-center justify-between text-[12px]">
+                            <span class="text-[#3C3C43]">${escapeHtml(subjName)} (${stat.visits} × ${formatRub(stat.rate)})</span>
+                            <span class="font-bold text-black">ЗП: ${formatRub(stat.salary)}</span>
+                          </div>
+                        `).join('')}
+                      </div>
+                    ` : `
+                      <div class="text-[11px] text-[#8E8E93] italic border-t border-black/5 pt-1.5">
+                        В этом месяце отмеченных посещений нет
+                      </div>
+                    `}
+                  </div>
+                `;
+              }).join('')
+          }
+        </div>
+      `;
+
+      const backupHtml = `
+        <div class="ios-card p-4 space-y-3">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              ${getTigrumLogoImgHtml('w-12 h-10 object-contain shrink-0')}
+              <div class="min-w-0">
+                <h3 class="text-[15px] font-bold text-black truncate">Облако, защита и копия</h3>
+                <p class="text-[12px] text-[#8E8E93] truncate">Код базы: <strong class="text-black">${escapeHtml(window.cloudSyncApi ? window.cloudSyncApi.getWorkspaceCode() : 'tigrum-main')}</strong></p>
+              </div>
+            </div>
+            <button onclick="openCloudSyncModal()" class="ios-press bg-emerald-50 text-emerald-700 font-semibold text-[12px] px-3 py-1.5 rounded-xl shrink-0">
+              Синхронизация
+            </button>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="openChangePasswordModal()" class="ios-press bg-indigo-50 text-indigo-700 font-semibold text-[13px] py-2.5 rounded-xl">
+              Сменить пароль
+            </button>
+            <button onclick="lockAppNow()" class="ios-press bg-black/5 text-black font-semibold text-[13px] py-2.5 rounded-xl">
+              Заблокировать
+            </button>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="exportDatabaseJson()" class="ios-press bg-[#007AFF]/10 text-[#007AFF] font-semibold text-[13px] py-2.5 rounded-xl">
+              Экспорт (JSON)
+            </button>
+            <label class="ios-press bg-emerald-50 text-emerald-700 font-semibold text-[13px] py-2.5 rounded-xl text-center cursor-pointer">
+              Импорт (JSON)
+              <input type="file" accept=".json,application/json" onchange="importDatabaseJson(event)" class="hidden" />
+            </label>
+          </div>
+          <button onclick="openResetConfirmModal()" class="ios-press w-full bg-rose-50 text-rose-600 font-semibold text-[13px] py-2.5 rounded-xl">
+            Очистить все данные
+          </button>
+        </div>
+      `;
+
+      main.innerHTML = monthNavHtml + kpiHtml + payrollHtml + backupHtml;
+    }
+
+    // =========================================================================
+    // 9. МОДАЛЬНЫЕ ОКНА СОЗДАНИЯ И РЕДАКТИРОВАНИЯ
+    // =========================================================================
+    function selectFormColor(containerId, colorClass) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.querySelectorAll('button').forEach(btn => {
+        const isMatch = btn.getAttribute('data-color') === colorClass;
+        btn.classList.toggle('ring-2', isMatch);
+        btn.classList.toggle('ring-offset-2', isMatch);
+        btn.classList.toggle('ring-black', isMatch);
+      });
+      const hidden = container.parentElement.querySelector('input[type="hidden"]');
+      if (hidden) hidden.value = colorClass;
+    }
+
+    function addCustomSubjectRow() {
+      const inp = document.getElementById('tf-new-subject');
+      const name = inp ? inp.value.trim() : '';
+      if (!name) return;
+
+      if (!appData.subjects.includes(name)) {
+        appData.subjects.push(name);
+        saveAppData();
+      }
+
+      const list = document.getElementById('tf-rates-list');
+      if (list && !list.querySelector(`[data-subject="${CSS.escape(name)}"]`)) {
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between gap-3 bg-[#F2F2F7] px-3 py-2 rounded-xl';
+        row.innerHTML = `
+          <span class="text-[13px] font-medium text-black">${escapeHtml(name)}</span>
+          <div class="flex items-center gap-1 shrink-0">
+            <input type="number" min="0" step="50" data-subject="${escapeHtml(name)}" value="" placeholder="0" class="tf-rate-input w-24 bg-white px-2.5 py-1.5 rounded-lg text-right text-[14px] font-bold focus:outline-none" />
+            <span class="text-[13px] text-[#8E8E93]">₽</span>
+          </div>
+        `;
+        list.appendChild(row);
+      }
+      inp.value = '';
+    }
+
+    // --- 9.1. Модальное окно Преподавателя и его тарифов ---
+    function openTeacherFormModal(teacherId = null) {
+      const teacher = teacherId ? getTeacherById(teacherId) : null;
+      const isEdit = Boolean(teacher);
+
+      const allSubjects = Array.from(new Set([
+        ...appData.subjects,
+        ...(teacher ? Object.keys(teacher.rates || {}) : [])
+      ]));
+
+      const selectedColor = teacher ? teacher.color : AVATAR_COLORS[appData.teachers.length % AVATAR_COLORS.length];
+      const salaryPercent = teacher && teacher.salaryPercent !== undefined ? Number(teacher.salaryPercent) : 50;
+
+      openModal(`
+        <div class="px-4 py-3.5 bg-white border-b border-black/5 flex items-center justify-between shrink-0">
+          <button onclick="closeModal()" class="text-[15px] text-[#007AFF] font-medium">Отмена</button>
+          <h3 class="text-[16px] font-bold text-black">${isEdit ? 'Педагог, тарифы и ЗП' : 'Новый педагог'}</h3>
+          <button onclick="saveTeacherForm('${teacher ? teacher.id : ''}')" class="text-[15px] text-[#007AFF] font-bold">Сохранить</button>
+        </div>
+        <div class="p-4 overflow-y-auto space-y-4">
+          <div class="ios-card p-4 space-y-3">
+            <div>
+              <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">ФИО преподавателя *</label>
+              <input id="tf-name" type="text" value="${teacher ? escapeHtml(teacher.name) : ''}" placeholder="Например: Иванова Анна Сергеевна" class="w-full bg-[#F2F2F7] px-3.5 py-2.5 rounded-xl text-[14px] focus:outline-none" />
+            </div>
+            <div class="grid grid-cols-2 gap-2.5">
+              <div>
+                <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Специализация</label>
+                <input id="tf-spec" type="text" value="${teacher ? escapeHtml(teacher.specialty || '') : ''}" placeholder="Логопед" class="w-full bg-[#F2F2F7] px-3.5 py-2.5 rounded-xl text-[14px] focus:outline-none" />
+              </div>
+              <div>
+                <label class="text-[12px] font-semibold text-indigo-700 block mb-1">Процент ЗП (%)</label>
+                <input id="tf-salary-pct" type="number" min="0" max="100" step="5" value="${salaryPercent}" class="w-full bg-indigo-50 text-indigo-900 font-bold px-3.5 py-2.5 rounded-xl text-[14px] focus:outline-none" />
+              </div>
+            </div>
+            <div>
+              <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Телефон</label>
+              <input id="tf-phone" type="tel" value="${teacher ? escapeHtml(teacher.phone || '') : ''}" placeholder="+7 (999) 000-00-00" class="w-full bg-[#F2F2F7] px-3.5 py-2.5 rounded-xl text-[14px] focus:outline-none" />
+            </div>
+            <div>
+              <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1.5">Цвет карточки</label>
+              <div class="flex gap-2" id="tf-colors">
+                ${AVATAR_COLORS.map(c => `
+                  <button type="button" onclick="selectFormColor('tf-colors', '${c}')" data-color="${c}" class="w-8 h-8 rounded-full ${c} ${c === selectedColor ? 'ring-2 ring-offset-2 ring-black' : ''}"></button>
+                `).join('')}
+              </div>
+              <input type="hidden" id="tf-color-val" value="${selectedColor}" />
+            </div>
+          </div>
+
+          <div class="ios-card p-4 space-y-3">
+            <div>
+              <h4 class="text-[15px] font-bold text-black">Стоимость занятий у педагога (₽)</h4>
+              <p class="text-[12px] text-[#8E8E93]">Укажите полную цену за 1 занятие для клиента. Зарплата педагога рассчитается по указанному проценту (%).</p>
+            </div>
+            <div id="tf-rates-list" class="space-y-2.5">
+              ${allSubjects.map(subj => {
+                const val = teacher && teacher.rates && teacher.rates[subj] !== undefined ? teacher.rates[subj] : '';
+                return `
+                  <div class="flex items-center justify-between gap-3 bg-[#F2F2F7] px-3 py-2 rounded-xl">
+                    <span class="text-[13px] font-medium text-black">${escapeHtml(subj)}</span>
+                    <div class="flex items-center gap-1 shrink-0">
+                      <input type="number" min="0" step="50" data-subject="${escapeHtml(subj)}" value="${val}" placeholder="0" class="tf-rate-input w-24 bg-white px-2.5 py-1.5 rounded-lg text-right text-[14px] font-bold focus:outline-none" />
+                      <span class="text-[13px] text-[#8E8E93]">₽</span>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            <div class="pt-2 border-t border-black/5 flex gap-2">
+              <input id="tf-new-subject" type="text" placeholder="Новое направление..." class="flex-1 bg-[#F2F2F7] px-3 py-2 rounded-xl text-[13px] focus:outline-none" />
+              <button type="button" onclick="addCustomSubjectRow()" class="bg-black text-white text-[12px] font-semibold px-3.5 py-2 rounded-xl shrink-0">
+                + Добавить
+              </button>
+            </div>
+          </div>
+        </div>
+      `);
+    }
+
+    function saveTeacherForm(teacherId) {
+      const name = document.getElementById('tf-name').value.trim();
+      if (!name) {
+        showToast('Введите ФИО преподавателя', 'warning');
+        return;
+      }
+      const specialty = document.getElementById('tf-spec').value.trim();
+      const phone = document.getElementById('tf-phone').value.trim();
+      const color = document.getElementById('tf-color-val').value || 'bg-indigo-600';
+      const rawPct = Number(document.getElementById('tf-salary-pct').value);
+      const salaryPercent = isNaN(rawPct) ? 50 : Math.max(0, Math.min(100, rawPct));
+
+      const rates = {};
+      document.querySelectorAll('.tf-rate-input').forEach(inp => {
+        const subj = inp.getAttribute('data-subject');
+        const val = Number(inp.value);
+        if (subj && val > 0) {
+          rates[subj] = val;
+        }
+      });
+
+      if (teacherId) {
+        const existing = getTeacherById(teacherId);
+        if (existing) {
+          existing.name = name;
+          existing.shortName = makeShortName(name);
+          existing.specialty = specialty;
+          existing.phone = phone;
+          existing.color = color;
+          existing.salaryPercent = salaryPercent;
+          existing.rates = rates;
+        }
+        showToast('Данные педагога, тарифы и ставка ЗП обновлены', 'success');
+      } else {
+        appData.teachers.push({
+          id: 't_' + Date.now(),
+          name,
+          shortName: makeShortName(name),
+          specialty,
+          phone,
+          color,
+          salaryPercent,
+          rates
+        });
+        showToast('Преподаватель добавлен', 'success');
+      }
+
+      saveAppData();
+      closeModal();
+      switchTab(uiState.activeTab);
+    }
+
+    function deleteTeacher(teacherId) {
+      appData.teachers = appData.teachers.filter(t => t.id !== teacherId);
+      saveAppData();
+      switchTab('teachers');
+      showToast('Преподаватель удален', 'info');
+    }
+
+    // --- 9.2. Модальные окна Ребенка (Просмотр, Создание, Пополнение) ---
+    function openChildDetailModal(childId) {
+      const child = getChildById(childId);
+      if (!child) return;
+
+      const bal = Number(child.balance) || 0;
+      const childLessons = appData.lessons.filter(l => l.enrollments.some(e => e.childId === child.id));
+
+      openModal(`
+        <div class="px-4 py-3.5 bg-white border-b border-black/5 flex items-center justify-between shrink-0">
+          <button onclick="closeModal()" class="text-[15px] text-[#007AFF] font-medium">Закрыть</button>
+          <h3 class="text-[16px] font-bold text-black">Карточка ребенка</h3>
+          <button onclick="openChildFormModal('${child.id}')" class="text-[15px] text-[#007AFF] font-semibold">Изм.</button>
+        </div>
+        <div class="p-4 overflow-y-auto space-y-4">
+          <div class="ios-card p-4 flex items-center gap-3.5">
+            <div class="w-14 h-14 rounded-2xl ${child.color || 'bg-emerald-600'} text-white font-bold text-[18px] flex items-center justify-center shrink-0">
+              ${getInitials(child.name)}
+            </div>
+            <div class="min-w-0">
+              <h4 class="text-[18px] font-bold text-black truncate">${escapeHtml(child.name)}</h4>
+              <p class="text-[13px] text-[#8E8E93]">${child.age ? `${escapeHtml(child.age)} • ` : ''}${escapeHtml(child.parentName || 'Родитель не указан')}</p>
+              ${child.parentPhone ? `<p class="text-[13px] text-[#007AFF] font-medium mt-0.5">${escapeHtml(child.parentPhone)}</p>` : ''}
+            </div>
+          </div>
+
+          <div class="ios-card p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-[13px] font-semibold text-[#8E8E93]">Баланс абонемента</span>
+              <span class="text-[22px] font-extrabold ${bal < 0 ? 'text-rose-600' : 'text-emerald-600'}">${formatRub(bal)}</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="topUpChildBalance('${child.id}', 1500)" class="ios-press bg-emerald-50 text-emerald-700 font-bold text-[13px] py-2 rounded-xl">+1 500 ₽</button>
+              <button onclick="topUpChildBalance('${child.id}', 3000)" class="ios-press bg-emerald-50 text-emerald-700 font-bold text-[13px] py-2 rounded-xl">+3 000 ₽</button>
+              <button onclick="topUpChildBalance('${child.id}', 5000)" class="ios-press bg-emerald-50 text-emerald-700 font-bold text-[13px] py-2 rounded-xl">+5 000 ₽</button>
+            </div>
+            <div class="flex gap-2 pt-1">
+              <input id="custom-topup-input" type="number" min="1" step="100" placeholder="Другая сумма (₽)" class="flex-1 bg-[#F2F2F7] px-3 py-2 rounded-xl text-[13px] focus:outline-none" />
+              <button onclick="topUpCustomAmount('${child.id}')" class="ios-press bg-[#007AFF] text-white font-semibold text-[13px] px-4 py-2 rounded-xl">Пополнить</button>
+            </div>
+          </div>
+
+          ${child.notes ? `
+            <div class="ios-card p-4">
+              <span class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Заметки</span>
+              <p class="text-[13px] text-black">${escapeHtml(child.notes)}</p>
+            </div>
+          ` : ''}
+
+          <div class="ios-card p-4 space-y-2.5">
+            <h4 class="text-[15px] font-bold text-black">Индивидуальный график (${childLessons.length})</h4>
+            ${childLessons.length === 0
+              ? `<p class="text-[13px] text-[#8E8E93]">Ребенок пока не записан ни на одно занятие.</p>`
+              : childLessons.map(l => {
+                  const t = getTeacherById(l.teacherId);
+                  const rate = getLessonRate(l);
+                  const status = getChildAttendanceOnDate(uiState.selectedDate, l.id, child.id);
+                  const statusLabel = status === 'present' ? 'Был' : status === 'absent' ? 'Пропуск' : 'План';
+                  const scheduleLabel = l.specificDate ? formatHumanDate(l.specificDate) : `Каждый ${l.day}`;
+                  return `
+                    <div class="bg-[#F2F2F7] p-3 rounded-xl flex items-center justify-between">
+                      <div>
+                        <div class="text-[13px] font-bold text-black">${scheduleLabel}, ${l.startTime} • ${escapeHtml(l.subject)}</div>
+                        <div class="text-[11px] text-[#8E8E93]">Педагог: ${t ? escapeHtml(t.shortName) : '—'} • ${formatRub(rate)}</div>
+                      </div>
+                      <span class="text-[11px] font-semibold px-2 py-1 rounded-lg bg-white text-black">${statusLabel}</span>
+                    </div>
+                  `;
+                }).join('')
+            }
+          </div>
+
+          <button onclick="deleteChild('${child.id}')" class="ios-press w-full bg-rose-50 text-rose-600 font-semibold text-[14px] py-3 rounded-xl">
+            Удалить карточку ребенка
+          </button>
+        </div>
+      `);
+    }
+
+    function topUpChildBalance(childId, amount) {
+      const child = getChildById(childId);
+      if (!child || !amount) return;
+      child.balance = (Number(child.balance) || 0) + Number(amount);
+      appData.topUps.push({
+        id: 'tu_' + Date.now(),
+        childId,
+        amount: Number(amount),
+        date: toIsoDateStr(new Date())
+      });
+      saveAppData();
+      showToast(`Баланс пополнен на ${formatRub(amount)}`, 'success');
+      openChildDetailModal(childId);
+      if (uiState.activeTab === 'children') renderChildrenTab();
+    }
+
+    function topUpCustomAmount(childId) {
+      const inp = document.getElementById('custom-topup-input');
+      const val = inp ? Number(inp.value) : 0;
+      if (val > 0) {
+        topUpChildBalance(childId, val);
+      } else {
+        showToast('Введите корректную сумму', 'warning');
+      }
+    }
+
+    function openChildFormModal(childId = null) {
+      const child = childId ? getChildById(childId) : null;
+      const isEdit = Boolean(child);
+      const selectedColor = child ? child.color : AVATAR_COLORS[appData.children.length % AVATAR_COLORS.length];
+
+      openModal(`
+        <div class="px-4 py-3.5 bg-white border-b border-black/5 flex items-center justify-between shrink-0">
+          <button onclick="closeModal()" class="text-[15px] text-[#007AFF] font-medium">Отмена</button>
+          <h3 class="text-[16px] font-bold text-black">${isEdit ? 'Редактировать ребенка' : 'Новый ребенок'}</h3>
+          <button onclick="saveChildForm('${child ? child.id : ''}')" class="text-[15px] text-[#007AFF] font-bold">Сохранить</button>
+        </div>
+        <div class="p-4 overflow-y-auto space-y-4">
+          <div class="ios-card p-4 space-y-3">
+            <div>
+              <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Имя и фамилия ребенка *</label>
+              <input id="cf-name" type="text" value="${child ? escapeHtml(child.name) : ''}" placeholder="Например: Артем Соколов" class="w-full bg-[#F2F2F7] px-3.5 py-2.5 rounded-xl text-[14px] focus:outline-none" />
+            </div>
+            <div class="grid grid-cols-2 gap-2.5">
+              <div>
+                <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Возраст</label>
+                <input id="cf-age" type="text" value="${child ? escapeHtml(child.age || '') : ''}" placeholder="5 лет" class="w-full bg-[#F2F2F7] px-3.5 py-2.5 rounded-xl text-[14px] focus:outline-none" />
+              </div>
+              <div>
+                <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Баланс (₽)</label>
+                <input id="cf-balance" type="number" step="100" value="${child ? Number(child.balance) : 0}" class="w-full bg-[#F2F2F7] px-3.5 py-2.5 rounded-xl text-[14px] font-bold focus:outline-none" />
+              </div>
+            </div>
+            <div>
+              <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Родитель (ФИО)</label>
+              <input id="cf-parent" type="text" value="${child ? escapeHtml(child.parentName || '') : ''}" placeholder="Елена Соколова" class="w-full bg-[#F2F2F7] px-3.5 py-2.5 rounded-xl text-[14px] focus:outline-none" />
+            </div>
+            <div>
+              <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Телефон родителя</label>
+              <input id="cf-phone" type="tel" value="${child ? escapeHtml(child.parentPhone || '') : ''}" placeholder="+7 (999) 123-45-67" class="w-full bg-[#F2F2F7] px-3.5 py-2.5 rounded-xl text-[14px] focus:outline-none" />
+            </div>
+            <div>
+              <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Комментарий / особенности</label>
+              <textarea id="cf-notes" rows="2" placeholder="Пожелания, особенности..." class="w-full bg-[#F2F2F7] px-3.5 py-2 rounded-xl text-[14px] focus:outline-none">${child ? escapeHtml(child.notes || '') : ''}</textarea>
+            </div>
+            <div>
+              <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1.5">Цвет карточки</label>
+              <div class="flex gap-2" id="cf-colors">
+                ${AVATAR_COLORS.map(c => `
+                  <button type="button" onclick="selectFormColor('cf-colors', '${c}')" data-color="${c}" class="w-8 h-8 rounded-full ${c} ${c === selectedColor ? 'ring-2 ring-offset-2 ring-black' : ''}"></button>
+                `).join('')}
+              </div>
+              <input type="hidden" id="cf-color-val" value="${selectedColor}" />
+            </div>
+          </div>
+        </div>
+      `);
+    }
+
+    function saveChildForm(childId) {
+      const name = document.getElementById('cf-name').value.trim();
+      if (!name) {
+        showToast('Введите имя ребенка', 'warning');
+        return;
+      }
+      const age = document.getElementById('cf-age').value.trim();
+      const balance = Number(document.getElementById('cf-balance').value) || 0;
+      const parentName = document.getElementById('cf-parent').value.trim();
+      const parentPhone = document.getElementById('cf-phone').value.trim();
+      const notes = document.getElementById('cf-notes').value.trim();
+      const color = document.getElementById('cf-color-val').value || 'bg-emerald-600';
+
+      if (childId) {
+        const existing = getChildById(childId);
+        if (existing) {
+          existing.name = name;
+          existing.age = age;
+          existing.balance = balance;
+          existing.parentName = parentName;
+          existing.parentPhone = parentPhone;
+          existing.notes = notes;
+          existing.color = color;
+        }
+        showToast('Карточка ребенка обновлена', 'success');
+      } else {
+        appData.children.push({
+          id: 'c_' + Date.now(),
+          name,
+          age,
+          balance,
+          parentName,
+          parentPhone,
+          notes,
+          color
+        });
+        showToast('Ребенок добавлен', 'success');
+      }
+
+      saveAppData();
+      closeModal();
+      switchTab(uiState.activeTab);
+    }
+
+    function deleteChild(childId) {
+      appData.children = appData.children.filter(c => c.id !== childId);
+      appData.lessons.forEach(l => {
+        l.enrollments = l.enrollments.filter(e => e.childId !== childId);
+      });
+      saveAppData();
+      closeModal();
+      switchTab('children');
+      showToast('Карточка ребенка удалена', 'info');
+    }
+
+    // --- 9.3. Модальное окно Занятия ---
+    function toggleLessonRepeatType() {
+      const type = document.getElementById('lf-repeat-type').value;
+      const dayWrap = document.getElementById('lf-day-wrap');
+      const dateWrap = document.getElementById('lf-date-wrap');
+      if (dayWrap && dateWrap) {
+        dayWrap.classList.toggle('hidden', type === 'once');
+        dateWrap.classList.toggle('hidden', type !== 'once');
+      }
+    }
+
+    function openLessonFormModal(lessonId = null) {
+      const lesson = lessonId ? appData.lessons.find(l => l.id === lessonId) : null;
+      const isEdit = Boolean(lesson);
+
+      const selectedDateObj = parseIsoDate(uiState.selectedDate);
+      const defaultDay = lesson ? lesson.day : getDayKeyFromDate(selectedDateObj);
+      const isOnce = Boolean(lesson && lesson.specificDate);
+      const defaultSpecificDate = (lesson && lesson.specificDate) ? lesson.specificDate : uiState.selectedDate;
+      const defaultTeacherId = lesson ? lesson.teacherId : (appData.teachers[0] ? appData.teachers[0].id : '');
+      const defaultSubject = lesson ? lesson.subject : (appData.subjects[0] || 'Логопед');
+      const enrolledIds = lesson ? lesson.enrollments.map(e => e.childId) : [];
+
+      openModal(`
+        <div class="px-4 py-3.5 bg-white border-b border-black/5 flex items-center justify-between shrink-0">
+          <button onclick="closeModal()" class="text-[15px] text-[#007AFF] font-medium">Отмена</button>
+          <h3 class="text-[16px] font-bold text-black">${isEdit ? 'Редактировать занятие' : 'Новое занятие'}</h3>
+          <button onclick="saveLessonForm('${lesson ? lesson.id : ''}')" class="text-[15px] text-[#007AFF] font-bold">Сохранить</button>
+        </div>
+        <div class="p-4 overflow-y-auto space-y-4">
+          <div class="ios-card p-4 space-y-3">
+            <div>
+              <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Периодичность в календаре</label>
+              <select id="lf-repeat-type" onchange="toggleLessonRepeatType()" class="w-full bg-[#F2F2F7] px-3 py-2.5 rounded-xl text-[14px] font-semibold focus:outline-none">
+                <option value="weekly" ${!isOnce ? 'selected' : ''}>Еженедельно по расписанию</option>
+                <option value="once" ${isOnce ? 'selected' : ''}>Разовое занятие на конкретную дату</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2">
+              <div id="lf-day-wrap" class="${isOnce ? 'hidden' : ''}">
+                <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">День недели</label>
+                <select id="lf-day" class="w-full bg-[#F2F2F7] px-2.5 py-2.5 rounded-xl text-[14px] font-semibold focus:outline-none">
+                  ${DAYS.map(d => `<option value="${d.key}" ${d.key === defaultDay ? 'selected' : ''}>${d.key} (${d.full})</option>`).join('')}
+                </select>
+              </div>
+              <div id="lf-date-wrap" class="${!isOnce ? 'hidden' : ''}">
+                <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Дата</label>
+                <input id="lf-specific-date" type="date" value="${defaultSpecificDate}" class="w-full bg-[#F2F2F7] px-2 py-2.5 rounded-xl text-[13px] font-semibold focus:outline-none" />
+              </div>
+              <div>
+                <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Начало</label>
+                <input id="lf-start" type="time" value="${lesson ? lesson.startTime : '10:00'}" class="w-full bg-[#F2F2F7] px-2.5 py-2.5 rounded-xl text-[14px] font-semibold focus:outline-none" />
+              </div>
+              <div>
+                <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Конец</label>
+                <input id="lf-end" type="time" value="${lesson ? lesson.endTime : '10:45'}" class="w-full bg-[#F2F2F7] px-2.5 py-2.5 rounded-xl text-[14px] font-semibold focus:outline-none" />
+              </div>
+            </div>
+
+            <div>
+              <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Направление</label>
+              <select id="lf-subject" class="w-full bg-[#F2F2F7] px-3 py-2.5 rounded-xl text-[14px] font-semibold focus:outline-none">
+                ${appData.subjects.map(s => `<option value="${escapeHtml(s)}" ${s === defaultSubject ? 'selected' : ''}>${escapeHtml(s)}</option>`).join('')}
+              </select>
+            </div>
+
+            <div>
+              <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Преподаватель *</label>
+              ${appData.teachers.length === 0
+                ? `<p class="text-[12px] text-rose-600 bg-rose-50 p-2.5 rounded-xl">Сначала добавьте хотя бы одного преподавателя во вкладке «Педагоги».</p>`
+                : `
+                  <select id="lf-teacher" class="w-full bg-[#F2F2F7] px-3 py-2.5 rounded-xl text-[14px] font-semibold focus:outline-none">
+                    ${appData.teachers.map(t => `<option value="${t.id}" ${t.id === defaultTeacherId ? 'selected' : ''}>${escapeHtml(t.name)}</option>`).join('')}
+                  </select>
+                `
+              }
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5">
+              <div>
+                <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Кабинет / формат</label>
+                <input id="lf-room" type="text" value="${lesson ? escapeHtml(lesson.room || '') : ''}" placeholder="Каб. 1 / Инд." class="w-full bg-[#F2F2F7] px-3 py-2.5 rounded-xl text-[14px] focus:outline-none" />
+              </div>
+              <div>
+                <label class="text-[12px] font-semibold text-[#8E8E93] block mb-1">Своя цена (₽, опц.)</label>
+                <input id="lf-custom-price" type="number" min="0" step="50" value="${lesson && lesson.customPrice !== null && lesson.customPrice !== undefined ? lesson.customPrice : ''}" placeholder="По тарифу" class="w-full bg-[#F2F2F7] px-3 py-2.5 rounded-xl text-[14px] focus:outline-none" />
+              </div>
+            </div>
+          </div>
+
+          <div class="ios-card p-4 space-y-2.5">
+            <h4 class="text-[15px] font-bold text-black">Записанные дети</h4>
+            ${appData.children.length === 0
+              ? `<p class="text-[12px] text-[#8E8E93]">Список детей пуст. Добавьте детей во вкладке «Дети».</p>`
+              : `<div class="space-y-2 max-h-48 overflow-y-auto">
+                  ${appData.children.map(c => {
+                    const checked = enrolledIds.includes(c.id);
+                    return `
+                      <label class="flex items-center justify-between bg-[#F2F2F7] px-3 py-2 rounded-xl cursor-pointer">
+                        <span class="text-[14px] font-medium text-black">${escapeHtml(c.name)}</span>
+                        <input type="checkbox" value="${c.id}" ${checked ? 'checked' : ''} class="lf-child-cb w-5 h-5 accent-[#007AFF] rounded" />
+                      </label>
+                    `;
+                  }).join('')}
+                </div>`
+            }
+          </div>
+
+          ${isEdit ? `
+            <button onclick="deleteLesson('${lesson.id}')" class="ios-press w-full bg-rose-50 text-rose-600 font-semibold text-[14px] py-3 rounded-xl">
+              Удалить занятие
+            </button>
+          ` : ''}
+        </div>
+      `);
+    }
+
+    function saveLessonForm(lessonId) {
+      const repeatType = document.getElementById('lf-repeat-type').value;
+      const specificDate = repeatType === 'once' ? document.getElementById('lf-specific-date').value : null;
+      const day = specificDate ? getDayKeyFromDate(parseIsoDate(specificDate)) : document.getElementById('lf-day').value;
+      const startTime = document.getElementById('lf-start').value || '10:00';
+      const endTime = document.getElementById('lf-end').value || '10:45';
+      const subject = document.getElementById('lf-subject').value;
+      const teacherEl = document.getElementById('lf-teacher');
+      const teacherId = teacherEl ? teacherEl.value : '';
+      const room = document.getElementById('lf-room').value.trim();
+      const customRaw = document.getElementById('lf-custom-price').value.trim();
+      const customPrice = customRaw === '' ? null : Number(customRaw);
+
+      if (!teacherId) {
+        showToast('Выберите преподавателя для занятия', 'warning');
+        return;
+      }
+
+      const selectedChildIds = Array.from(document.querySelectorAll('.lf-child-cb:checked')).map(cb => cb.value);
+
+      if (lessonId) {
+        const existing = appData.lessons.find(l => l.id === lessonId);
+        if (existing) {
+          const newEnrollments = selectedChildIds.map(cid => {
+            const prev = existing.enrollments.find(e => e.childId === cid);
+            return prev ? prev : { childId: cid };
+          });
+
+          existing.day = day;
+          existing.specificDate = specificDate;
+          existing.startTime = startTime;
+          existing.endTime = endTime;
+          existing.subject = subject;
+          existing.teacherId = teacherId;
+          existing.room = room;
+          existing.customPrice = customPrice;
+          existing.enrollments = newEnrollments;
+        }
+        showToast('Занятие обновлено', 'success');
+      } else {
+        appData.lessons.push({
+          id: 'l_' + Date.now(),
+          day,
+          specificDate,
+          startTime,
+          endTime,
+          subject,
+          teacherId,
+          room,
+          customPrice,
+          enrollments: selectedChildIds.map(cid => ({ childId: cid }))
+        });
+        if (specificDate) {
+          selectCalendarDate(specificDate);
+        }
+        showToast('Занятие добавлено в календарь', 'success');
+      }
+
+      saveAppData();
+      closeModal();
+      switchTab('schedule');
+    }
+
+    function deleteLesson(lessonId) {
+      appData.lessons = appData.lessons.filter(l => l.id !== lessonId);
+      saveAppData();
+      closeModal();
+      switchTab('schedule');
+      showToast('Занятие удалено', 'info');
+    }
+
+    // =========================================================================
+    // 10. ЭКСПОРТ, ИМПОРТ И ПОЛНАЯ ОЧИСТКА БАЗЫ ДАННЫХ
+    // =========================================================================
+    function exportDatabaseJson() {
+      try {
+        const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `tigrum_center_backup_${toIsoDateStr(new Date())}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        showToast('Резервная копия JSON скачана', 'success');
+      } catch (e) {
+        showToast('Не удалось экспортировать базу', 'error');
+      }
+    }
+
+    function importDatabaseJson(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (!parsed || !Array.isArray(parsed.teachers) || !Array.isArray(parsed.children) || !Array.isArray(parsed.lessons)) {
+            throw new Error('Неверный формат файла');
+          }
+          appData = {
+            subjects: Array.isArray(parsed.subjects) && parsed.subjects.length ? parsed.subjects : [...DEFAULT_SUBJECTS],
+            teachers: parsed.teachers,
+            children: parsed.children,
+            lessons: parsed.lessons,
+            attendanceLog: parsed.attendanceLog && typeof parsed.attendanceLog === 'object' ? parsed.attendanceLog : {},
+            topUps: Array.isArray(parsed.topUps) ? parsed.topUps : []
+          };
+          saveAppData();
+          switchTab(uiState.activeTab);
+          showToast('База успешно импортирована', 'success');
+        } catch (err) {
+          showToast('Ошибка чтения JSON файла', 'error');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function openResetConfirmModal() {
+      openModal(`
+        <div class="p-5 space-y-4 text-center">
+          <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto font-bold text-xl">!</div>
+          <div>
+            <h3 class="text-[17px] font-bold text-black">Очистить все данные?</h3>
+            <p class="text-[13px] text-[#8E8E93] mt-1">
+              Все педагоги, карточки детей, расписание и история посещений Детского развивающего центра «Тигрум» будут безвозвратно удалены.
+            </p>
+          </div>
+          <div class="grid grid-cols-2 gap-2.5 pt-1">
+            <button onclick="closeModal()" class="ios-press bg-[#E5E5EA] text-black font-semibold text-[14px] py-3 rounded-xl">Отмена</button>
+            <button onclick="confirmFullReset()" class="ios-press bg-rose-600 text-white font-semibold text-[14px] py-3 rounded-xl">Очистить всё</button>
+          </div>
+        </div>
+      `);
+    }
+
+    function confirmFullReset() {
+      appData = getEmptyStateData();
+      saveAppData();
+      closeModal();
+      switchTab('schedule');
+      showToast('База данных полностью очищена', 'info');
+    }
+
+    // =========================================================================
+    // 11. ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
+    // =========================================================================
+    function updateStatusClock() {
+      const clockEl = document.getElementById('ios-clock');
+      if (!clockEl) return;
+      const now = new Date();
+      clockEl.textContent = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    }
+
+    window.onload = function() {
+      initBrandBranding();
+      updateStatusClock();
+      setInterval(updateStatusClock, 30000);
+      switchTab('schedule');
+      renderLockScreen();
+    };
+
+    // Автоматическая блокировка при сворачивании приложения на iPhone или переключении вкладки
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden && getAuthConfig()) {
+        lockAppNow();
+      }
+    });
+  </script>
+</body>
+</html>
